@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="fields" th:object="${form}" class="suggestion-fields">
+    <h2 class="suggestion-section-title">あなたのこと</h2>
+    <div class="suggestion-grid">
+        <div class="suggestion-field">
+            <label for="heightCm">身長 <small>cm</small></label>
+            <input type="number" th:field="*{heightCm}" min="100" max="250" step="1" inputmode="numeric" required
+                   aria-describedby="height-error" th:attr="aria-invalid=${#fields.hasErrors('heightCm')}">
+            <p class="suggestion-error" id="height-error" th:errors="*{heightCm}"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="weightKg">体重 <small>kg</small></label>
+            <input type="number" th:field="*{weightKg}" min="30" max="200" step="1" inputmode="numeric" required
+                   aria-describedby="weight-error" th:attr="aria-invalid=${#fields.hasErrors('weightKg')}">
+            <p class="suggestion-error" id="weight-error" th:errors="*{weightKg}"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="age">年齢 <small>歳</small></label>
+            <input type="number" th:field="*{age}" min="15" max="90" step="1" inputmode="numeric" required
+                   aria-describedby="age-error" th:attr="aria-invalid=${#fields.hasErrors('age')}">
+            <p class="suggestion-error" id="age-error" th:errors="*{age}"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="gender">性別</label>
+            <select th:field="*{gender}" required aria-describedby="gender-error" th:attr="aria-invalid=${#fields.hasErrors('gender')}">
+                <option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}"></option>
+            </select>
+            <p class="suggestion-error" id="gender-error" th:errors="*{gender}"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="goal">目標</label>
+            <select th:field="*{goal}" required aria-describedby="goal-error" th:attr="aria-invalid=${#fields.hasErrors('goal')}">
+                <option th:each="goal : ${goals}" th:value="${goal}" th:text="${goal}"></option>
+            </select>
+            <p class="suggestion-error" id="goal-error" th:errors="*{goal}"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="environment">運動環境</label>
+            <select th:field="*{environment}" required aria-describedby="environment-error" th:attr="aria-invalid=${#fields.hasErrors('environment')}">
+                <option th:each="environment : ${environments}" th:value="${environment}" th:text="${environment}"></option>
+            </select>
+            <p class="suggestion-error" id="environment-error" th:errors="*{environment}"></p>
+        </div>
+    </div>
+    <div class="suggestion-field">
+        <label for="allergy">アレルギー・苦手な食べ物 <small>任意</small></label>
+        <input type="text" th:field="*{allergy}" maxlength="200" placeholder="例：卵アレルギー、牛乳が苦手"
+               aria-describedby="allergy-error" th:attr="aria-invalid=${#fields.hasErrors('allergy')}">
+        <p class="suggestion-error" id="allergy-error" th:errors="*{allergy}"></p>
+    </div>
+</div>
+</body>
+</html>
