@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS suggestion (
+    id VARCHAR(36) PRIMARY KEY,
+    created_at TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    input_json LONGTEXT NOT NULL,
+    response_json LONGTEXT NOT NULL,
+    source VARCHAR(20) NOT NULL
+);
