@@ -1,0 +1,84 @@
+トレ食 開発環境構築手順
+
+1. 使用する環境
+
+-   開発環境：Visual Studio Code（VS Code）
+-   言語：Java
+-   Javaバージョン：21
+-   フレームワーク：Spring Boot 4.1.1
+-   ビルド：Gradle
+-   Packaging：JAR
+-   データベース：MySQL
+-   プロジェクト名：treshoku
+-   Package：com.example.treshoku
+
+2. Javaの準備
+
+JavaをPCにインストールする。 今回のプロジェクトでは Java 21 を使用する。
+
+インストール確認： java -version
+
+Javaのバージョンが表示されればOK。
+
+3. VS Codeの準備
+
+VS Codeをインストールし、拡張機能から以下を追加する。
+
+-   Extension Pack for Java
+-   Spring Boot Extension Pack
+
+4. Spring Bootプロジェクトの作成
+
+VS Codeで Ctrl + Shift + P を押し、 「Spring Initializr: Create a Gradle
+Project」を選択する。
+
+設定内容： - Spring Boot Version：4.1.1 - Language：Java - Group
+Id：com.example - Artifact Id：treshoku - Package
+Name：com.example.treshoku - Packaging：JAR - Java Version：21
+
+5. Dependencies
+
+以下の5つを追加する。
+
+1.  Spring Web Webアプリ、Controller、API作成に使用。
+
+2.  Spring Data JPA Javaからデータベースを操作するために使用。
+
+3.  MySQL Driver Spring BootからMySQLへ接続するために使用。
+
+4.  Validation ユーザーが入力した値のチェックに使用。
+
+5.  Spring Boot DevTools 開発中の再起動などを便利にするために使用。
+
+6. プロジェクトの保存
+
+例： C:
+
+作成後： チャレキャラ └─ treshoku
+
+7. MySQL
+
+MySQL Driverとは別に、各PCへMySQL Serverをインストールする。
+
+MySQL Server：
+実際にユーザー情報やトレーニング記録などのデータを保存する。
+
+MySQL Driver： Spring Boot（Java）からMySQL
+Serverへ接続するために使用する。
+
+8. Java側の予定構成
+
+src/main/java/com/example/treshoku ├─ entity ├─ controller ├─ service ├─
+repository └─ exception
+
+最初は entity/User.java から作成する予定。
+
+その後の流れ： User ↓ UserRepository ↓ UserService ↓ UserController
+
+9. 3人で必ず統一する設定
+
+Java：21 Spring Boot：4.1.1 Project名：treshoku
+Package：com.example.treshoku Build：Gradle Packaging：JAR
+
+※
+チーム内で環境の違いによるエラーを減らすため、上記のバージョン・設定はできるだけ全員で統一する。
