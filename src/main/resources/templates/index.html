@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>今日の提案をつくる｜トレ食</title>
+    <link rel="stylesheet" href="../static/css/record.css" th:href="@{/css/record.css}">
+    <link rel="stylesheet" href="../static/css/suggestion.css" th:href="@{/css/suggestion.css}">
+    <script src="../static/js/suggestion.js" th:src="@{/js/suggestion.js}" defer></script>
+</head>
+<body class="suggestion-page">
+    <header class="record-header suggestion-header">
+        <a class="suggestion-brand" th:href="@{/}" href="/">トレ食</a>
+        <span>食事と運動を、あなたの毎日に。</span>
+    </header>
+    <main class="suggestion-layout">
+        <aside class="suggestion-intro record-panel">
+            <p class="eyebrow">YOUR DAILY PLAN</p>
+            <h1>今日は、何をして<br>何を食べる？</h1>
+            <p>あなたの体と目標に合わせて、AIが食事と運動のメニューを提案します。</p>
+            <ol class="suggestion-steps">
+                <li><strong>あなたのことを教える</strong><span>体格・目標・運動できる場所を入力。</span></li>
+                <li><strong>メニューを相談する</strong><span>食事や運動の希望は、チャットで相談できます。</span></li>
+                <li><strong>提案を見て、記録する</strong><span>食事・運動の相談と、日々の記録をひとつの画面で。</span></li>
+            </ol>
+            <p class="suggestion-help">入力内容はあとからプロフィールで変更できます。</p>
+        </aside>
+        <section class="record-panel suggestion-card" aria-labelledby="suggestion-title">
+            <div class="panel-heading">
+                <div><p class="eyebrow">PROFILE &amp; CONDITION</p><h2 id="suggestion-title">今日の提案をつくる</h2></div>
+                <span class="badge badge--red">AI</span>
+            </div>
+            <form id="suggest-form" class="suggestion-form" data-suggestion-form
+                  th:action="@{/suggest}" th:object="${form}" method="post">
+                <p class="suggestion-error-summary" role="alert" th:if="${#fields.hasErrors('*')}">入力内容を確認してください。エラーのある項目を修正すると、もう一度送信できます。</p>
+                <div th:replace="~{fragments/suggestion-fields :: fields}"></div>
+                <button type="submit" class="suggestion-submit" id="submit-btn">
+                    <span data-submit-label>今日の提案をつくる</span><span data-submit-loading hidden>AIが考えています…</span>
+                </button>
+                <p class="suggestion-help" data-submit-status role="status">提案の作成には少し時間がかかります。</p>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

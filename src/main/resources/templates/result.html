@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>記録一覧｜トレ食</title>
+
+    <link
+        rel="stylesheet"
+        href="../static/css/record.css"
+        th:href="@{/css/record.css}"
+    >
+
+    <link rel="stylesheet" href="../static/css/record-entry.css" th:href="@{/css/record-entry.css}">
+    <link rel="stylesheet" href="../static/css/profile.css" th:href="@{/css/profile.css}">
+    <link rel="stylesheet" href="../static/css/suggestion.css" th:href="@{/css/suggestion.css}">
+    <link rel="stylesheet" href="../static/css/feedback.css" th:href="@{/css/feedback.css}">
+    <script src="../static/js/suggestion.js" th:src="@{/js/suggestion.js}" defer></script>
+    <script src="../static/js/profile.js" th:src="@{/js/profile.js}" defer></script>
+    <script src="../static/js/record-entry.js" th:src="@{/js/record-entry.js}" defer></script>
+    <script
+        src="../static/js/record.js"
+        th:src="@{/js/record.js}"
+        defer
+    ></script>
+    <script th:inline="javascript">window.mealChatProfile = /*[[${form}]]*/ {};</script>
+    <script src="../static/js/feedback.js" th:src="@{/js/feedback.js}" defer></script>
+    <script src="../static/js/meal-chat.js?v=slide-2" th:src="@{/js/meal-chat.js(v='slide-2')}" defer></script>
+</head>
+
+<body>
+
+<div class="record-page">
+
+    <!-- ========================================
+         ヘッダー
+    ========================================= -->
+    <header class="record-header">
+
+        <nav
+            class="record-header__navigation"
+            aria-label="メインメニュー"
+        >
+
+            <button
+                type="button"
+                class="record-header__button" id="meal-navigation" aria-controls="meal-chat" aria-expanded="false"
+            >
+                食事について
+            </button>
+
+            <button
+                type="button"
+                class="record-header__button" id="workout-navigation" aria-controls="workout-chat" aria-expanded="false"
+            >
+                運動について
+            </button>
+
+            <button
+                type="button"
+                class="record-header__button" id="record-navigation" aria-controls="record-entry" aria-expanded="false"
+            >
+                記録する
+            </button>
+
+            <button
+                type="button"
+                class="record-header__button" id="profile-navigation" aria-controls="profile-panel" aria-expanded="false"
+            >
+                プロフィール
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <main class="record-dashboard">
+        <section class="record-entry" id="record-entry" aria-labelledby="record-entry-title"
+                 data-endpoint="/api/calorie-estimate" th:attr="data-endpoint=@{/api/calorie-estimate}" hidden>
+            <form id="record-entry-form">
+                <h1 id="record-entry-title" tabindex="-1">今日の記録</h1>
+                <section class="record-entry__section" aria-labelledby="entry-meal-title">
+                    <h2 id="entry-meal-title">食事の記録</h2>
+                    <p class="record-entry__hint">栄養素は任意入力です。食べた量に含まれるグラム数を入力してください。塩分は食塩相当量を入力します。</p>
+                    <div id="entry-meal-list" class="record-entry__list"></div>
+                    <p id="entry-meal-empty" class="record-entry__empty">「追加」から食べたものと量を入力してください。</p>
+                    <div class="record-entry__section-footer">
+                        <p>総カロリー：<output id="entry-meal-total">+0 kcal</output></p>
+                        <div class="record-entry__actions">
+                            <button type="button" class="record-entry__action record-entry__estimate" id="entry-estimate-meal" aria-describedby="entry-estimate-hint">AIでカロリーを調べる<span class="visually-hidden">（食事）</span></button>
+                            <button type="button" class="record-entry__action" id="entry-add-meal">追加<span class="visually-hidden">（食事）</span></button>
+                        </div>
+                        <div id="entry-nutrient-totals" class="record-entry__nutrient-totals" hidden>
+                            <p>栄養素の合計（入力済み分）</p>
+                            <dl></dl>
+                        </div>
+                        <p id="entry-estimate-meal-status" class="record-entry__status record-entry__estimate-status" role="status"></p>
+                    </div>
+                </section>
+                <section class="record-entry__section" aria-labelledby="entry-workout-title">
+                    <h2 id="entry-workout-title">運動の記録</h2>
+                    <div id="entry-workout-list" class="record-entry__list"></div>
+                    <p id="entry-workout-empty" class="record-entry__empty">「追加」から運動の内容と時間・回数を入力してください。</p>
+                    <div class="record-entry__section-footer">
+                        <p>総カロリー：<output id="entry-workout-total">−0 kcal</output></p>
+                        <div class="record-entry__actions">
+                            <button type="button" class="record-entry__action record-entry__estimate" id="entry-estimate-workout" aria-describedby="entry-estimate-hint">AIでカロリーを調べる<span class="visually-hidden">（運動）</span></button>
+                            <button type="button" class="record-entry__action" id="entry-add-workout">追加<span class="visually-hidden">（運動）</span></button>
+                        </div>
+                        <p id="entry-estimate-workout-status" class="record-entry__status record-entry__estimate-status" role="status"></p>
+                    </div>
+                </section>
+                <section class="record-entry__balance visually-hidden" aria-labelledby="entry-balance-title">
+                    <h2 id="entry-balance-title">一日の総カロリー</h2>
+                    <output id="entry-balance" aria-live="polite">0 kcal − 0 kcal = 0 kcal</output>
+                    <p class="record-entry__hint">食事の摂取カロリー − 記録した運動の消費カロリー</p>
+                </section>
+                <div class="record-entry__footer">
+                    <div class="record-entry__weight">
+                        <label for="entry-weight-whole">体重：</label>
+                        <input id="entry-weight-whole" type="number" min="1" max="499" step="1" inputmode="numeric" aria-label="体重の整数部分">
+                        <span aria-hidden="true">.</span>
+                        <select id="entry-weight-decimal" aria-label="体重の小数部分">
+                            <option value="0">0</option><option value="1">1</option>
+                            <option value="2">2</option><option value="3">3</option>
+                            <option value="4">4</option><option value="5">5</option>
+                            <option value="6">6</option><option value="7">7</option>
+                            <option value="8">8</option><option value="9">9</option>
+                        </select>
+                        <span>kg</span>
+                    </div>
+                    <button type="submit" id="entry-save" class="record-entry__action">記録</button>
+                </div>
+                <p class="record-entry__hint" id="entry-estimate-hint">AIはカロリーが未入力の項目を推定します。食事の量・運動の時間や回数を入力してください。推定値は目安で、後から変更できます。</p>
+                <p class="record-entry__hint">記録はこのブラウザーに保存されます。</p>
+                <p id="record-entry-status" class="record-entry__status" role="status"></p>
+            </form>
+        </section>
+
+        <section class="meal-chat" id="meal-chat" aria-labelledby="meal-chat-title"
+                 th:attr="data-endpoint=@{/api/meal-chat}" data-endpoint="/api/meal-chat" hidden>
+            <div class="meal-chat__heading">
+                <div><p class="eyebrow">MEAL ASSISTANT</p><h1 id="meal-chat-title">食事について相談する</h1></div>
+                <span class="badge badge--meal">MEAL</span>
+            </div>
+            <div class="meal-chat__messages" id="meal-chat-messages" role="log" aria-label="AIとの会話" aria-live="polite">
+                <article class="meal-chat__message">
+                    <span class="meal-chat__avatar" aria-hidden="true">AI</span>
+                    <p class="meal-chat__bubble">今日の食事を一緒に考えましょう。食べたいものや使いたい食材、予算などを教えてください。下のボタンから、今日のおすすめメニューも作れます。</p>
+                </article>
+            </div>
+            <form id="meal-chat-form" class="meal-chat__composer">
+                <button type="button" id="meal-chat-recommend" class="meal-chat__recommend">今日のおすすめ食事メニューを決めてもらう ↗</button>
+                <p id="meal-chat-status" class="meal-chat__status" role="status"></p>
+                <label for="meal-chat-input">相談したい内容</label>
+                <div class="meal-chat__input-row">
+                    <textarea id="meal-chat-input" rows="2" maxlength="1000" placeholder="相談したい内容を入力してください" aria-describedby="meal-chat-hint"></textarea>
+                    <button type="submit" id="meal-chat-send" aria-label="メッセージを送信">↑</button>
+                </div>
+                <p id="meal-chat-hint" class="meal-chat__hint">Enterで送信 / Shift + Enterで改行</p>
+            </form>
+        </section>
+
+        <section class="meal-chat" id="workout-chat" aria-labelledby="workout-chat-title"
+                 th:attr="data-endpoint=@{/api/workout-chat}" data-endpoint="/api/workout-chat" hidden>
+            <div class="meal-chat__heading">
+                <div><p class="eyebrow">WORKOUT ASSISTANT</p><h1 id="workout-chat-title">運動について相談する</h1></div>
+                <span class="badge badge--black">WORKOUT</span>
+            </div>
+            <div class="meal-chat__messages" id="workout-chat-messages" role="log" aria-label="AIとの会話" aria-live="polite">
+                <article class="meal-chat__message">
+                    <span class="meal-chat__avatar" aria-hidden="true">AI</span>
+                    <p class="meal-chat__bubble">今日の運動を一緒に考えましょう。使える時間や器具、鍛えたい部位、今日の体調などを教えてください。下のボタンから、今日のおすすめメニューも作れます。</p>
+                </article>
+            </div>
+            <form id="workout-chat-form" class="meal-chat__composer">
+                <button type="button" id="workout-chat-recommend" class="meal-chat__recommend">今日のおすすめ運動メニューを決めてもらう ↗</button>
+                <p id="workout-chat-status" class="meal-chat__status" role="status"></p>
+                <label for="workout-chat-input">相談したい内容</label>
+                <div class="meal-chat__input-row">
+                    <textarea id="workout-chat-input" rows="2" maxlength="1000" placeholder="相談したい内容を入力してください" aria-describedby="workout-chat-hint"></textarea>
+                    <button type="submit" id="workout-chat-send" aria-label="メッセージを送信">↑</button>
+                </div>
+                <p id="workout-chat-hint" class="meal-chat__hint">Enterで送信 / Shift + Enterで改行</p>
+            </form>
+        </section>
+
+        <!-- ========================================
+             左側
+        ========================================= -->
+        <aside class="record-panel record-panel--left">
+
+            <!-- カレンダー用 -->
+            <div
+                class="left-content left-content--active"
+                data-left-view="calendar"
+            >
+
+                <div class="panel-heading">
+
+                    <div>
+                        <p class="eyebrow">DAILY RECORD</p>
+
+                        <h1 id="selected-date-title">
+                            今日の記録
+                        </h1>
+                    </div>
+
+                    <span class="badge badge--red">
+                        RECORD
+                    </span>
+
+                </div>
+
+
+                <section class="record-section">
+
+                    <div class="section-heading">
+
+                        <h2>食事の記録</h2>
+
+                        <span class="badge badge--meal">
+                            MEAL
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="meal-record-list"
+                        class="record-list"
+                    ></div>
+
+                    <div class="summary-row">
+
+                        <span>総摂取カロリー</span>
+
+                        <strong id="total-intake-calories">
+                            0 kcal
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <section class="record-section">
+
+                    <div class="section-heading">
+
+                        <h2>運動の記録</h2>
+
+                        <span class="badge badge--black">
+                            WORKOUT
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="workout-record-list"
+                        class="record-list"
+                    ></div>
+
+                    <div class="summary-row">
+
+                        <span>運動による消費</span>
+
+                        <strong id="total-workout-calories">
+                            0 kcal
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <section class="balance-card">
+
+                    <div>
+                        <span>一日の差し引き</span>
+
+                        <small>
+                            摂取 − 記録した運動の消費
+                        </small>
+                    </div>
+
+                    <strong id="daily-calorie-balance">
+                        0 kcal
+                    </strong>
+
+                </section>
+
+                <details class="daily-feedback" id="daily-feedback">
+                    <summary>この日の振り返りを見る</summary>
+                    <div id="daily-feedback-content" class="feedback-copy"></div>
+                </details>
+
+            </div>
+
+
+            <!-- 体重用 -->
+            <div
+                class="left-content"
+                data-left-view="weight"
+            >
+
+                <div class="panel-heading">
+
+                    <div>
+                        <p class="eyebrow">WEIGHT SUMMARY</p>
+                        <h1>体重の推移</h1>
+                    </div>
+
+                    <span class="badge badge--weight">
+                        WEIGHT
+                    </span>
+
+                </div>
+
+
+                <section class="metric-grid">
+
+                    <article class="metric-card">
+                        <span>現在の体重</span>
+
+                        <strong id="current-weight">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>前回の記録との差</span>
+
+                        <strong id="previous-weight-difference">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>直近7件の平均</span>
+
+                        <strong id="weekly-weight-average">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>最新記録の月平均</span>
+
+                        <strong id="monthly-weight-average">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card metric-card--wide">
+                        <span>記録開始からの変化</span>
+
+                        <strong id="total-weight-change">
+                            -- kg
+                        </strong>
+                    </article>
+
+                </section>
+
+
+                <section class="history-section">
+
+                    <div class="section-heading">
+                        <h2>体重履歴</h2>
+                    </div>
+
+                    <div class="table-scroll">
+
+                        <table class="history-table">
+
+                            <thead>
+                            <tr>
+                                <th>日付</th>
+                                <th>体重</th>
+                                <th>前回比</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="weight-history-body"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- カロリー用 -->
+            <div
+                class="left-content"
+                data-left-view="calories"
+            >
+
+                <div class="panel-heading">
+
+                    <div>
+                        <p class="eyebrow">CALORIE SUMMARY</p>
+                        <h1>カロリーの推移</h1>
+                    </div>
+
+                    <span class="badge badge--calorie">
+                        CALORIE
+                    </span>
+
+                </div>
+
+
+                <p
+                    id="selected-calorie-date"
+                    class="selected-data-date"
+                >
+                    今日のカロリー
+                </p>
+
+
+                <section class="metric-grid">
+
+                    <article class="metric-card">
+                        <span>摂取カロリー</span>
+
+                        <strong
+                            id="selected-intake-calories"
+                            class="meal-text"
+                        >
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>運動による消費</span>
+
+                        <strong
+                            id="selected-burned-calories"
+                            class="workout-text"
+                        >
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>直近7件の平均摂取</span>
+
+                        <strong id="average-intake-calories">
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>直近7件の平均運動消費</span>
+
+                        <strong id="average-burned-calories">
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card metric-card--wide">
+                        <span>直近7件の差し引き合計</span>
+
+                        <strong id="weekly-calorie-balance">
+                            -- kcal
+                        </strong>
+                    </article>
+
+                </section>
+
+
+                <section class="history-section">
+
+                    <div class="section-heading">
+                        <h2>カロリー履歴</h2>
+                    </div>
+
+                    <div class="table-scroll">
+
+                        <table class="history-table history-table--calorie">
+
+                            <thead>
+                            <tr>
+                                <th>日付</th>
+                                <th>摂取</th>
+                                <th>消費</th>
+                                <th>差</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="calorie-history-body"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <div class="left-content" data-left-view="feedback">
+                <div class="panel-heading">
+                    <div><p class="eyebrow">RECORD REVIEW</p><h1>記録を振り返る</h1></div>
+                    <span class="badge badge--red">REVIEW</span>
+                </div>
+                <div class="feedback-intro">
+                    <p>食事と運動の積み重ねを、<br>少し立ち止まって見てみよう。</p>
+                    <p class="feedback-muted">週・月・年・すべての期間で記録を振り返れます。週は月曜〜日曜、月と年は暦に合わせて集計します。</p>
+                    <div class="feedback-intro__note">
+                        <strong>次の一歩は、ひとつで十分。</strong>
+                        <p>できたこと、記録の傾向、次に試すことを短くまとめます。</p>
+                    </div>
+                    <p class="feedback-muted">未入力の食事や栄養素は、不足やゼロとして評価しません。</p>
+                </div>
+            </div>
+        </aside>
+
+
+        <!-- ========================================
+             中央
+        ========================================= -->
+        <section class="record-panel record-panel--center">
+
+            <!-- 表示切り替え -->
+            <div
+                class="record-view-tabs"
+                role="tablist"
+                aria-label="表示内容を選択"
+            >
+
+                <button
+                    type="button"
+                    class="record-view-tabs__button record-view-tabs__button--active"
+                    data-view="calendar"
+                    aria-selected="true"
+                >
+                    <span class="record-view-tabs__icon">▦</span>
+                    <span>カレンダー</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="record-view-tabs__button"
+                    data-view="weight"
+                    aria-selected="false"
+                >
+                    <span class="record-view-tabs__icon">▥</span>
+                    <span>体重の推移</span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="record-view-tabs__button"
+                    data-view="calories"
+                    aria-selected="false"
+                >
+                    <span class="record-view-tabs__icon">◔</span>
+                    <span>カロリー</span>
+                </button>
+
+                <button type="button" class="record-view-tabs__button" data-view="feedback" aria-selected="false">
+                    <span class="record-view-tabs__icon" aria-hidden="true">✧</span>
+                    <span>振り返り</span>
+                </button>
+
+            </div>
+
+
+            <div
+                id="view-viewport"
+                class="record-view-viewport"
+                tabindex="0"
+            >
+
+                <div
+                    id="view-track"
+                    class="record-view-track"
+                >
+
+                    <!-- カレンダー -->
+                    <section
+                        class="center-content calendar-content"
+                        data-center-view="calendar"
+                        aria-hidden="false"
+                    >
+
+                        <div class="calendar-toolbar">
+
+                            <button
+                                id="previous-month"
+                                type="button"
+                                class="calendar-arrow"
+                                aria-label="前の月"
+                            >
+                                ‹
+                            </button>
+
+
+                            <div class="calendar-title">
+
+                                <p class="eyebrow">
+                                    RECORD CALENDAR
+                                </p>
+
+                                <h2 id="calendar-title">
+                                    カレンダー
+                                </h2>
+
+                            </div>
+
+
+                            <button
+                                id="next-month"
+                                type="button"
+                                class="calendar-arrow"
+                                aria-label="次の月"
+                            >
+                                ›
+                            </button>
+
+                        </div>
+
+
+                        <div class="calendar-weekdays">
+
+                            <span class="weekday-sunday">日</span>
+                            <span>月</span>
+                            <span>火</span>
+                            <span>水</span>
+                            <span>木</span>
+                            <span>金</span>
+                            <span class="weekday-saturday">土</span>
+
+                        </div>
+
+
+                        <div
+                            id="calendar-grid"
+                            class="calendar-grid"
+                        ></div>
+
+
+                        <div class="calendar-legend">
+
+                            <span>
+                                <i class="legend-dot legend-dot--selected"></i>
+                                選択中
+                            </span>
+
+                            <span>
+                                <i class="legend-dot legend-dot--record"></i>
+                                記録あり
+                            </span>
+
+                            <span>
+                                <i class="legend-dot legend-dot--today"></i>
+                                今日
+                            </span>
+
+                        </div>
+
+                        <aside class="feedback-notice" id="feedback-notice" aria-label="先週の振り返り" hidden>
+                            <div><strong>先週の記録を振り返りませんか</strong><p id="feedback-notice-summary"></p></div>
+                            <div class="feedback-actions">
+                                <button type="button" class="feedback-button feedback-button--primary" id="feedback-notice-open">振り返りを見る</button>
+                                <button type="button" class="feedback-button" id="feedback-notice-dismiss">閉じる</button>
+                            </div>
+                        </aside>
+
+                    </section>
+
+
+                    <!-- 体重グラフ -->
+                    <section
+                        class="center-content graph-content"
+                        data-center-view="weight"
+                        aria-hidden="true"
+                    >
+
+                        <div class="graph-heading">
+
+                            <div>
+                                <p class="eyebrow">WEIGHT HISTORY</p>
+                                <h2>体重の推移</h2>
+                                <p id="weight-period"></p>
+                            </div>
+
+                            <span class="badge badge--weight">
+                                kg
+                            </span>
+
+                        </div>
+
+
+                        <div class="weight-chart">
+
+                            <div class="weight-chart__grid"></div>
+
+                            <div
+                                id="weight-bars"
+                                class="weight-bars"
+                            ></div>
+
+                        </div>
+
+
+                        <div
+                            id="weight-point-detail"
+                            class="graph-message"
+                        >
+                            棒グラフを押すと体重を確認できます
+                        </div>
+
+                    </section>
+
+
+                    <!-- カロリー円グラフ -->
+                    <section
+                        class="center-content graph-content"
+                        data-center-view="calories"
+                        aria-hidden="true"
+                    >
+
+                        <div class="graph-heading">
+
+                            <div>
+                                <p class="eyebrow">CALORIE BALANCE</p>
+                                <h2>摂取と消費のバランス</h2>
+                                <p id="calorie-chart-date"></p>
+                            </div>
+
+                            <span class="badge badge--calorie">
+                                kcal
+                            </span>
+
+                        </div>
+
+
+                        <div class="calorie-chart">
+
+                            <div class="donut-container">
+
+                                <div
+                                    id="calorie-donut"
+                                    class="calorie-donut"
+                                >
+
+                                    <div class="calorie-donut__center">
+
+                                        <span>差し引き</span>
+
+                                        <strong id="donut-balance">
+                                            -- kcal
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="calorie-chart__legend">
+
+                                <article class="calorie-legend-card">
+
+                                    <span class="calorie-mark calorie-mark--intake"></span>
+
+                                    <div>
+                                        <small>摂取カロリー</small>
+
+                                        <strong id="donut-intake">
+                                            -- kcal
+                                        </strong>
+
+                                        <p id="donut-intake-percentage">
+                                            --%
+                                        </p>
+                                    </div>
+
+                                </article>
+
+
+                                <article class="calorie-legend-card">
+
+                                    <span class="calorie-mark calorie-mark--burned"></span>
+
+                                    <div>
+                                        <small>記録した運動の消費</small>
+
+                                        <strong id="donut-burned">
+                                            -- kcal
+                                        </strong>
+
+                                        <p id="donut-burned-percentage">
+                                            --%
+                                        </p>
+                                    </div>
+
+                                </article>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            id="calorie-message"
+                            class="graph-message"
+                        >
+                            摂取と消費を比較します
+                        </div>
+
+                    </section>
+
+                    <section class="center-content feedback-content" data-center-view="feedback" aria-hidden="true" inert>
+                        <div class="feedback-heading">
+                            <div><p class="eyebrow">YOUR RECORDS</p><h2 id="feedback-title" tabindex="-1">一週間の振り返り</h2></div>
+                            <span class="feedback-label" id="feedback-period-label">先週</span>
+                        </div>
+                        <fieldset class="feedback-granularity" id="feedback-granularity">
+                            <legend class="visually-hidden">振り返りの集計単位</legend>
+                            <label><input type="radio" name="feedback-period-kind" value="week" checked><span>週</span></label>
+                            <label><input type="radio" name="feedback-period-kind" value="month"><span>月</span></label>
+                            <label><input type="radio" name="feedback-period-kind" value="year"><span>年</span></label>
+                            <label><input type="radio" name="feedback-period-kind" value="all"><span>すべて</span></label>
+                        </fieldset>
+                        <div class="feedback-period">
+                            <button type="button" class="feedback-button" id="feedback-previous" aria-label="前の週">‹</button>
+                            <p id="feedback-period" aria-live="polite"></p>
+                            <button type="button" class="feedback-button" id="feedback-next" aria-label="次の週">›</button>
+                        </div>
+                        <div class="feedback-preview">
+                            <p id="feedback-source">記録から作成した振り返り</p>
+                            <button type="button" class="feedback-button" id="feedback-sample" aria-pressed="false">サンプルで試す</button>
+                        </div>
+                        <p class="feedback-sample-note" id="feedback-sample-note" hidden>サンプルを表示しています。実際の記録には保存されません。</p>
+                        <div id="feedback-report" aria-live="polite"></div>
+                    </section>
+                </div>
+
+            </div>
+
+
+            <div class="record-swipe-guide">
+
+                <span id="previous-view-label"></span>
+
+                <span class="record-swipe-guide__main">
+                    ← 横にスワイプして切り替え →
+                </span>
+
+                <span id="next-view-label">
+                    体重の推移 →
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================
+             右側
+        ========================================= -->
+        <aside class="record-panel record-panel--right"
+               th:with="meal=${suggestion?.meal}, training=${suggestion?.training?.?[#this != null and !#strings.isEmpty(#strings.trim(name))]}, hasMenu=${!#strings.isEmpty(#strings.trim(meal?.breakfast)) or !#strings.isEmpty(#strings.trim(meal?.lunch)) or !#strings.isEmpty(#strings.trim(meal?.dinner)) or !#lists.isEmpty(training)}">
+
+            <div class="panel-heading">
+
+                <div>
+                    <p class="eyebrow">TODAY MENU</p>
+                    <h1>本日のメニュー</h1>
+                </div>
+
+                <span class="ai-icon">AI</span>
+
+            </div>
+
+
+            <div class="suggestion-notices" id="menu-notices" data-menu-dependent hidden th:hidden="${!hasMenu}"
+                 th:if="${!#strings.isEmpty(#strings.trim(notice)) or !#strings.isEmpty(#strings.trim(storageNotice))}">
+                <p class="notice" role="status" th:if="${!#strings.isEmpty(#strings.trim(notice))}" th:text="${notice}"></p>
+                <p class="notice" role="status" th:if="${!#strings.isEmpty(#strings.trim(storageNotice))}" th:text="${storageNotice}"></p>
+            </div>
+            <section class="suggestion-context" id="menu-context" data-menu-dependent hidden th:hidden="${!hasMenu}" th:if="${form != null}">
+                <details>
+                    <summary>この提案の条件・BMI</summary>
+                    <dl>
+                        <dt>年齢・性別</dt><dd th:text="${form.age} + '歳 / ' + ${form.gender}"></dd>
+                        <dt>身長・体重</dt><dd th:text="${form.heightCm} + 'cm / ' + ${form.weightKg} + 'kg'"></dd>
+                        <dt>BMI</dt><dd id="suggestion-bmi" th:text="${#numbers.formatDecimal(form.bmi(), 1, 1)}"></dd>
+                        <dt>目標</dt><dd th:text="${form.goal}"></dd>
+                        <dt>運動環境</dt><dd th:text="${form.environment}"></dd>
+                        <dt>アレルギー等</dt><dd th:text="${#strings.isEmpty(form.allergy) ? '特になし' : form.allergy}"></dd>
+                    </dl>
+                </details>
+                <button type="button" class="suggestion-edit" data-open-profile aria-controls="profile-panel">条件を変えてもう一度</button>
+            </section>
+
+            <div class="recommendation-content recommendation-content--visible">
+                <section class="recommendation-section" id="meal-menu" hidden
+                         th:hidden="${#strings.isEmpty(#strings.trim(meal?.breakfast)) and #strings.isEmpty(#strings.trim(meal?.lunch)) and #strings.isEmpty(#strings.trim(meal?.dinner))}">
+                    <div class="section-heading">
+                        <h2>食事のメニュー</h2>
+                        <span class="badge badge--meal">MEAL</span>
+                    </div>
+                    <article class="menu-card" hidden th:hidden="${#strings.isEmpty(#strings.trim(meal?.breakfast))}">
+                        <span class="menu-card__label">朝食</span>
+                        <p data-meal="breakfast" th:text="${meal?.breakfast}"></p>
+                    </article>
+                    <article class="menu-card" hidden th:hidden="${#strings.isEmpty(#strings.trim(meal?.lunch))}">
+                        <span class="menu-card__label">昼食</span>
+                        <p data-meal="lunch" th:text="${meal?.lunch}"></p>
+                    </article>
+                    <article class="menu-card" hidden th:hidden="${#strings.isEmpty(#strings.trim(meal?.dinner))}">
+                        <span class="menu-card__label">夕食</span>
+                        <p data-meal="dinner" th:text="${meal?.dinner}"></p>
+                    </article>
+                </section>
+                <section class="recommendation-section" id="workout-menu" hidden th:hidden="${#lists.isEmpty(training)}">
+                    <div class="section-heading">
+                        <h2>運動のメニュー</h2>
+                        <span class="badge badge--black">WORKOUT</span>
+                    </div>
+                    <div id="recommended-training">
+                        <article class="training-card" hidden th:hidden="${false}" th:each="exercise : ${training}">
+                            <div class="training-card__top">
+                                <strong th:text="${exercise.name}"></strong>
+                                <span th:text="${exercise.sets}" th:if="${!#strings.isEmpty(#strings.trim(exercise.sets))}"></span>
+                            </div>
+                            <p th:text="${exercise.note}" th:if="${!#strings.isEmpty(#strings.trim(exercise.note))}"></p>
+                        </article>
+                    </div>
+                </section>
+                <section class="ai-comment" data-menu-dependent hidden th:hidden="${!hasMenu}"
+                         th:if="${!#strings.isEmpty(#strings.trim(suggestion?.comment))}">
+                    <span>AI</span>
+                    <p th:text="${suggestion.comment}"></p>
+                </section>
+            </div>
+            <section class="recommendation-empty" id="menu-empty" th:hidden="${hasMenu}">
+                <span class="recommendation-empty__icon" aria-hidden="true">AI</span>
+                <h2>AIに相談しましょう</h2>
+                <p>食事や運動について相談して、今日のメニューを決めましょう。</p>
+                <button type="button" data-open-chat="meal" aria-controls="meal-chat">食事について相談する</button>
+                <button type="button" data-open-chat="workout" aria-controls="workout-chat">運動について相談する</button>
+            </section>
+        </aside>
+
+        <aside class="record-panel profile-panel" id="profile-panel" aria-labelledby="profile-title" hidden>
+            <form id="profile-form" th:object="${form}">
+                <section class="profile-section">
+                    <h1 id="profile-title" tabindex="-1">プロフィール・提案条件</h1>
+                    <div th:replace="~{fragments/suggestion-fields :: fields}"></div>
+                    <div class="profile-field">
+                        <label for="profile-target-weight">目標体重：</label>
+                        <input id="profile-target-weight" name="targetWeightKg" type="number" min="1" max="499.9" step="0.1" inputmode="decimal" placeholder="未設定">
+                        <span>kg</span>
+                    </div>
+                </section>
+                <section class="profile-section" aria-labelledby="profile-theme-title">
+                    <h2 id="profile-theme-title">テーマカラーの変更</h2>
+                    <div id="profile-palette" class="profile-palette" role="radiogroup" aria-label="背景のテーマカラー"></div>
+                    <div class="profile-color-field">
+                        <label for="profile-color">好きな色を選ぶ</label>
+                        <input id="profile-color" type="color" value="#ef233c">
+                        <output id="profile-color-value" for="profile-color">#EF233C</output>
+                    </div>
+                    <button type="button" id="profile-theme-reset" class="profile-reset">標準の色に戻す</button>
+                </section>
+                <p class="profile-hint">テーマカラーは選ぶと背景に反映されます。目標体重とテーマカラーはこのブラウザーに保存されます。</p>
+                <p id="profile-status" class="profile-status" role="status"></p>
+            </form>
+        </aside>
+    </main>
+
+</div>
+
+</body>
+</html>

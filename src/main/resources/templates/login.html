@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ログイン｜トレ食</title>
+    <link rel="stylesheet" href="../static/css/login.css" th:href="@{/css/login.css}">
+    <script src="../static/js/login.js" th:src="@{/js/login.js}" defer></script>
+</head>
+<body>
+    <main class="login-layout" aria-labelledby="login-title">
+        <div class="login-artwork">
+            <img src="../static/images/toresyoku-login.png"
+                 th:src="@{/images/toresyoku-login.png}"
+                 width="1322" height="1190"
+                 alt="トレ食。食事 × トレーニング ＝ 理想の自分へ。">
+        </div>
+        <section class="login-panel">
+            <h1 id="login-title">ログイン</h1>
+            <form id="login-form" action="#" method="post">
+                <div class="login-field">
+                    <label for="login-email">ユーザーID(メールアドレス)</label>
+                    <input id="login-email" type="email" autocomplete="username"
+                           inputmode="email" autocapitalize="none" spellcheck="false"
+                           required aria-describedby="login-status">
+                </div>
+                <div class="login-field">
+                    <label for="login-password">パスワード</label>
+                    <input id="login-password" type="password" autocomplete="current-password"
+                           required aria-describedby="login-status">
+                </div>
+                <div class="registration-row">
+                    <button class="registration-link" id="register-button" type="button">新規登録の方はこちら</button>
+                </div>
+                <button class="login-submit" type="submit" disabled>ログイン</button>
+                <p class="login-status" id="login-status" role="status" aria-live="polite"></p>
+                <noscript><p class="login-status">JavaScriptを有効にしてご利用ください。</p></noscript>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
