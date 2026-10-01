@@ -1,0 +1,1708 @@
+:root {
+    --red: #ef233c;
+    --red-dark: #c9001d;
+    --red-light: #ffe6ea;
+
+    --black: #151515;
+    --white: #ffffff;
+
+    --page-background: #1d1d1d;
+    --panel: #d8d8d8;
+    --panel-light: #f8f8f8;
+    --border: #b9b9b9;
+    --sub-text: #6b6b6b;
+
+    --weight: #9a5f3c;
+    --calorie: #f49b0b;
+
+    --good: #07885f;
+    --bad: #d91f36;
+}
+
+
+/* ========================================
+   リセット
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+
+    color: var(--black);
+    background: var(--page-background);
+
+    font-family:
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
+        "Meiryo",
+        sans-serif;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+h1,
+h2,
+p {
+    margin: 0;
+}
+
+
+/* ========================================
+   ページ全体
+======================================== */
+
+.record-page {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+}
+
+
+/* ========================================
+   ヘッダー
+======================================== */
+
+body .record-header {
+    flex: 0 0 auto;
+
+    width: 100%;
+    padding: 9px;
+
+    background: var(--red);
+    border-bottom: 2px solid var(--black);
+
+    isolation: isolate;
+}
+
+body .record-header__navigation {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body .record-header__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 54px;
+    margin: 0;
+    padding: 8px 12px;
+
+    color: var(--black);
+    font-size: clamp(17px, 1.45vw, 25px);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+
+    appearance: none;
+    background: #eeeeee;
+    border: 2px solid transparent;
+    border-radius: 0;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
+}
+
+body .record-header__button:hover {
+    color: var(--red-dark);
+
+    background: var(--white);
+    border-color: var(--red-dark);
+}
+
+body .record-header__button:active {
+    transform: translateY(1px);
+}
+
+/* ========================================
+   3列レイアウト
+======================================== */
+
+.record-dashboard {
+    display: grid;
+
+    grid-template-columns:
+        minmax(255px, 0.9fr)
+        minmax(430px, 1.5fr)
+        minmax(290px, 1fr);
+
+    flex: 1;
+    min-height: 0;
+
+    gap: 8px;
+    padding: 8px;
+
+    overflow: hidden;
+
+    background: var(--red);
+}
+
+.record-panel {
+    min-width: 0;
+    min-height: 0;
+
+    background: var(--panel);
+}
+
+.record-panel--left {
+    height: 100%;
+    overflow: hidden;
+}
+
+.record-panel--center {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    overflow: hidden;
+
+    background: var(--panel-light);
+}
+
+.record-panel--right {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+
+/* ========================================
+   共通パーツ
+======================================== */
+
+.panel-heading {
+    position: sticky;
+    z-index: 10;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 18px 20px;
+
+    background: var(--panel);
+    border-bottom: 2px solid var(--border);
+}
+
+.panel-heading h1 {
+    font-size: clamp(21px, 1.7vw, 29px);
+    line-height: 1.25;
+}
+
+.eyebrow {
+    margin-bottom: 4px;
+
+    color: var(--red-dark);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    padding: 5px 11px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    border-radius: 999px;
+}
+
+.badge--red {
+    color: var(--white);
+    background: var(--red);
+}
+
+.badge--meal {
+    color: var(--red-dark);
+    background: var(--red-light);
+}
+
+.badge--black {
+    color: var(--white);
+    background: var(--black);
+}
+
+.badge--weight {
+    color: var(--white);
+    background: var(--weight);
+}
+
+.badge--calorie {
+    color: var(--white);
+    background: var(--calorie);
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+.section-heading h2 {
+    font-size: clamp(18px, 1.45vw, 25px);
+}
+
+
+/* ========================================
+   左側の切り替え
+======================================== */
+
+.left-content {
+    display: none;
+
+    width: 100%;
+    height: 100%;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.left-content--active {
+    display: block;
+}
+
+
+/* ========================================
+   食事・運動記録
+======================================== */
+
+.record-section {
+    padding: 18px 20px;
+
+    border-bottom: 2px solid var(--border);
+}
+
+.record-list {
+    display: grid;
+    gap: 10px;
+}
+
+.record-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 13px 14px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 9px;
+}
+
+.record-item span {
+    min-width: 0;
+
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.record-item strong {
+    flex: 0 0 auto;
+}
+
+.record-item__category {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--sub-text);
+    font-size: 12px;
+}
+
+.record-item--nutrients {
+    flex-wrap: wrap;
+}
+
+.record-item__nutrients {
+    flex-basis: 100%;
+    color: var(--sub-text);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.empty-record {
+    padding: 22px 14px;
+
+    color: var(--sub-text);
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px dashed #999999;
+    border-radius: 9px;
+}
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-top: 15px;
+    padding-top: 14px;
+
+    border-top: 1px solid #a5a5a5;
+}
+
+.summary-row strong {
+    font-size: clamp(18px, 1.5vw, 25px);
+}
+
+.balance-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    margin: 18px 20px;
+    padding: 20px;
+
+    background: var(--white);
+    border-left: 7px solid var(--red);
+}
+
+.balance-card span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 18px;
+}
+
+.balance-card small {
+    color: var(--sub-text);
+}
+
+.balance-card strong {
+    color: var(--red-dark);
+
+    font-size: clamp(22px, 1.9vw, 31px);
+}
+
+
+/* ========================================
+   左側の数値カード
+======================================== */
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    padding: 18px 20px;
+}
+
+.metric-card {
+    min-width: 0;
+    padding: 16px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 10px;
+}
+
+.metric-card--wide {
+    grid-column: 1 / -1;
+}
+
+.metric-card span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.metric-card strong {
+    display: block;
+
+    font-size: clamp(18px, 1.5vw, 26px);
+    overflow-wrap: anywhere;
+}
+
+.metric-card strong.is-down {
+    color: var(--good);
+}
+
+.metric-card strong.is-up {
+    color: var(--bad);
+}
+
+.meal-text {
+    color: var(--red);
+}
+
+.workout-text {
+    color: var(--black);
+}
+
+.selected-data-date {
+    margin: 16px 20px 0;
+    padding: 11px 14px;
+
+    color: var(--red-dark);
+    font-weight: 800;
+
+    background: var(--white);
+    border-left: 5px solid var(--red);
+}
+
+
+/* ========================================
+   履歴テーブル
+======================================== */
+
+.history-section {
+    padding: 0 20px 22px;
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 9px;
+}
+
+.history-table {
+    width: 100%;
+    min-width: 310px;
+
+    border-collapse: collapse;
+}
+
+.history-table--calorie {
+    min-width: 410px;
+}
+
+.history-table th,
+.history-table td {
+    padding: 11px 9px;
+
+    text-align: right;
+    white-space: nowrap;
+
+    border-bottom: 1px solid #c5c5c5;
+}
+
+.history-table th:first-child,
+.history-table td:first-child {
+    text-align: left;
+}
+
+.history-table th {
+    font-size: 12px;
+
+    background: #eeeeee;
+}
+
+.history-table tbody tr {
+    cursor: pointer;
+}
+
+.history-table tbody tr:hover {
+    background: var(--white);
+}
+
+.history-table tbody tr.is-selected {
+    color: var(--red-dark);
+    font-weight: 800;
+
+    background: var(--red-light);
+}
+
+
+/* ========================================
+   中央の表示切り替えボタン
+======================================== */
+
+.record-view-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    flex: 0 0 auto;
+
+    width: min(560px, calc(100% - 36px));
+    margin: 12px auto 5px;
+    padding: 5px;
+    gap: 5px;
+
+    background: #e8e8e8;
+    border: 1px solid #d1d1d1;
+    border-radius: 14px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
+}
+
+.record-view-tabs__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 7px 10px;
+
+    color: #565656;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        box-shadow 0.2s,
+        transform 0.2s;
+}
+
+.record-view-tabs__button:hover {
+    color: var(--red-dark);
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.record-view-tabs__button:active {
+    transform: translateY(1px);
+}
+
+.record-view-tabs__button--active {
+    color: var(--white);
+
+    background: var(--red);
+
+    box-shadow:
+        0 3px 8px rgba(239, 35, 60, 0.3);
+}
+
+.record-view-tabs__button--active:hover {
+    color: var(--white);
+    background: var(--red-dark);
+}
+
+.record-view-tabs__icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+
+/* ========================================
+   中央の横スライド
+======================================== */
+
+.record-view-viewport {
+    flex: 1;
+    min-height: 0;
+
+    overflow: hidden;
+
+    touch-action: pan-y;
+}
+
+.record-view-track {
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+
+    transform: translateX(0);
+
+    transition: transform 0.38s ease;
+}
+
+.center-content {
+    flex: 0 0 100%;
+
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    padding: 14px 22px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.record-swipe-guide {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+
+    flex: 0 0 auto;
+
+    min-height: 34px;
+    padding: 6px 18px;
+
+    color: #777777;
+    font-size: 12px;
+
+    background: var(--panel-light);
+    border-top: 1px solid #dddddd;
+}
+
+.record-swipe-guide span:first-child {
+    text-align: left;
+}
+
+.record-swipe-guide span:last-child {
+    text-align: right;
+}
+
+.record-swipe-guide__main {
+    text-align: center;
+}
+
+
+/* ========================================
+   カレンダー
+======================================== */
+
+.calendar-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-toolbar {
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    gap: 12px;
+
+    flex: 0 0 auto;
+
+    margin-bottom: 12px;
+}
+
+.calendar-title {
+    text-align: center;
+}
+
+.calendar-title h2 {
+    font-size: clamp(21px, 1.8vw, 29px);
+}
+
+.calendar-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+    padding: 0;
+
+    color: var(--white);
+    font-size: 33px;
+    line-height: 1;
+
+    appearance: none;
+    background: var(--red);
+    border: 0;
+    border-radius: 11px;
+
+    cursor: pointer;
+}
+
+.calendar-arrow:hover {
+    background: var(--red-dark);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+
+    flex: 0 0 auto;
+
+    border-top: 1px solid #d4d4d4;
+    border-left: 1px solid #d4d4d4;
+}
+
+.calendar-weekdays span {
+    padding: 9px 3px;
+
+    font-weight: 800;
+    text-align: center;
+
+    background: #f2f2f2;
+    border-right: 1px solid #d4d4d4;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.weekday-sunday {
+    color: var(--red);
+}
+
+.weekday-saturday {
+    color: #2563eb;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, minmax(44px, 1fr));
+
+    flex: 1;
+    min-height: 295px;
+
+    border-left: 1px solid #d4d4d4;
+}
+
+.calendar-day {
+    position: relative;
+
+    min-width: 0;
+    min-height: 0;
+    padding: 7px;
+
+    font-weight: 800;
+
+    appearance: none;
+    background: var(--white);
+    border: 0;
+    border-right: 1px solid #d4d4d4;
+    border-bottom: 1px solid #d4d4d4;
+
+    cursor: pointer;
+}
+
+.calendar-day:hover {
+    color: var(--red-dark);
+    background: var(--red-light);
+}
+
+.calendar-day.is-outside {
+    color: #b2b2b2;
+    background: #eeeeee;
+}
+
+.calendar-day.is-selected {
+    color: var(--white);
+    background: var(--red);
+}
+
+.calendar-day.is-today {
+    box-shadow: inset 0 0 0 3px var(--black);
+}
+
+.calendar-day__dot {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+
+    display: none;
+
+    width: 8px;
+    height: 8px;
+
+    background: var(--red);
+    border-radius: 50%;
+
+    transform: translateX(-50%);
+}
+
+.calendar-day.has-record .calendar-day__dot {
+    display: block;
+}
+
+.calendar-day.is-selected .calendar-day__dot {
+    background: var(--white);
+}
+
+.calendar-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    flex: 0 0 auto;
+
+    padding: 11px 4px 0;
+
+    color: #666666;
+    font-size: 13px;
+}
+
+.calendar-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.legend-dot {
+    display: inline-block;
+
+    width: 11px;
+    height: 11px;
+
+    border-radius: 50%;
+}
+
+.legend-dot--selected {
+    background: var(--red);
+}
+
+.legend-dot--record {
+    background: var(--white);
+    border: 3px solid var(--red);
+}
+
+.legend-dot--today {
+    background: var(--white);
+    border: 3px solid var(--black);
+}
+
+
+/* ========================================
+   グラフ共通
+======================================== */
+
+.graph-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.graph-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    flex: 0 0 auto;
+}
+
+.graph-heading h2 {
+    font-size: clamp(22px, 2vw, 31px);
+}
+
+.graph-heading p:last-child {
+    margin-top: 4px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+}
+
+.graph-message {
+    flex: 0 0 auto;
+
+    padding: 14px 18px;
+
+    text-align: center;
+
+    background: var(--white);
+    border-left: 6px solid var(--red);
+    border-radius: 6px;
+}
+
+
+/* ========================================
+   体重グラフ
+======================================== */
+
+.weight-chart {
+    position: relative;
+
+    flex: 1;
+    min-height: 290px;
+    padding: 26px 18px 14px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: var(--white);
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+}
+
+.weight-chart__grid {
+    position: absolute;
+    inset: 24px 18px 42px;
+
+    background:
+        repeating-linear-gradient(
+            to top,
+            transparent 0,
+            transparent calc(20% - 1px),
+            #dddddd calc(20% - 1px),
+            #dddddd 20%
+        );
+
+    border-bottom: 2px solid #aaaaaa;
+
+    pointer-events: none;
+}
+
+.weight-bars {
+    --weight-gap: clamp(4px, 0.8vw, 12px);
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: repeat(var(--weight-count, 12), minmax(32px, 1fr));
+    gap: var(--weight-gap);
+
+    width: 100%;
+    min-width: max(500px, calc(var(--weight-count, 12) * (32px + var(--weight-gap)) - var(--weight-gap)));
+    height: 100%;
+}
+
+.weight-bar-item {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 28px;
+
+    min-width: 0;
+}
+
+.weight-bar-space {
+    position: relative;
+}
+
+/* 日付ラベルの28pxを除き、棒と同じ高さの領域に目標線を重ねる。 */
+.weight-target-overlay {
+    position: absolute;
+    inset: 0 0 28px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.weight-target-line {
+    position: absolute;
+    right: 0;
+    bottom: var(--target-height);
+    left: 0;
+    height: 0;
+    border-top: 2px solid #087f8c;
+}
+
+.weight-target-label {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    padding: 3px 6px;
+    color: #07636d;
+    background: #fff;
+    border: 1px solid #087f8c;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.weight-bar {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+
+    width: min(34px, 74%);
+    height: var(--bar-height, 50%);
+
+    appearance: none;
+    background: var(--frame-color, var(--red));
+
+    border: 0;
+    border-radius: 8px 8px 2px 2px;
+
+    cursor: pointer;
+
+    transform: translateX(-50%);
+}
+
+.weight-bar:hover,
+.weight-bar.is-selected {
+    filter: brightness(1.12);
+}
+
+.weight-bar.is-selected {
+    outline: 3px solid var(--frame-color, var(--red));
+    outline-offset: 2px;
+}
+
+.weight-bar-value {
+    position: absolute;
+    bottom: calc(var(--bar-height, 50%) + 5px);
+    left: 50%;
+
+    color: #75432b;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+
+    transform: translateX(-50%);
+}
+
+.weight-bar-date {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding-bottom: 2px;
+
+    color: #555555;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* ========================================
+   カロリー円グラフ
+======================================== */
+
+.calorie-chart {
+    display: grid;
+    grid-template-columns: minmax(235px, 1.1fr) minmax(190px, 0.9fr);
+    align-items: center;
+    gap: 24px;
+
+    flex: 1;
+    min-height: 300px;
+    padding: 24px;
+
+    background: var(--white);
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+}
+
+.donut-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calorie-donut {
+    --intake-angle: 180deg;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(30vw, 320px);
+    max-width: 100%;
+    aspect-ratio: 1;
+
+    background:
+        conic-gradient(
+            var(--red) 0deg var(--intake-angle),
+            var(--black) var(--intake-angle) 360deg
+        );
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 1px #dddddd,
+        0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+.calorie-donut.is-empty {
+    background: #dddddd;
+}
+
+.calorie-donut__center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 58%;
+    aspect-ratio: 1;
+
+    text-align: center;
+
+    background: var(--white);
+    border-radius: 50%;
+}
+
+.calorie-donut__center span {
+    margin-bottom: 7px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+}
+
+.calorie-donut__center strong {
+    color: var(--red-dark);
+
+    font-size: clamp(18px, 2vw, 29px);
+}
+
+.calorie-chart__legend {
+    display: grid;
+    gap: 14px;
+}
+
+.calorie-legend-card {
+    display: grid;
+    grid-template-columns: 15px 1fr;
+    gap: 12px;
+
+    padding: 16px;
+
+    background: #f3f3f3;
+    border-radius: 10px;
+}
+
+.calorie-mark {
+    width: 14px;
+    min-height: 58px;
+
+    border-radius: 999px;
+}
+
+.calorie-mark--intake {
+    background: var(--red);
+}
+
+.calorie-mark--burned {
+    background: var(--black);
+}
+
+.calorie-legend-card small {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--sub-text);
+}
+
+.calorie-legend-card strong {
+    display: block;
+
+    font-size: clamp(18px, 1.7vw, 26px);
+}
+
+.calorie-legend-card p {
+    margin-top: 4px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+}
+
+
+/* ========================================
+   AIおすすめ
+======================================== */
+
+.ai-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    color: var(--white);
+    font-weight: 800;
+
+    background: var(--red);
+    border-radius: 50%;
+}
+
+.recommendation-content {
+    display: none;
+    flex-direction: column;
+}
+
+.recommendation-content--visible {
+    display: flex;
+}
+
+.recommendation-section {
+    padding: 18px 20px;
+
+    border-bottom: 2px solid var(--border);
+}
+
+.menu-card {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    align-items: center;
+    gap: 14px;
+
+    margin-top: 11px;
+    padding: 13px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 10px;
+}
+
+.menu-card__label {
+    padding: 10px 8px;
+
+    color: var(--white);
+    font-weight: 800;
+    text-align: center;
+
+    background: var(--red);
+    border-radius: 8px;
+}
+
+.training-card {
+    margin-top: 11px;
+    padding: 15px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 10px;
+}
+
+.training-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.training-card__top span {
+    padding: 5px 9px;
+
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 800;
+
+    background: var(--black);
+    border-radius: 999px;
+}
+
+.training-card p {
+    margin-top: 8px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.ai-comment {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    align-items: center;
+    gap: 15px;
+
+    margin: 20px;
+    padding: 18px;
+
+    background: var(--white);
+    border-left: 6px solid var(--red);
+}
+
+.ai-comment span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 50px;
+    height: 50px;
+
+    color: var(--white);
+    font-weight: 800;
+
+    background: var(--red);
+    border-radius: 50%;
+}
+
+
+/* ========================================
+   メニュー未設定
+======================================== */
+
+.recommendation-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: calc(100% - 100px);
+    padding: 36px 24px;
+
+    text-align: center;
+}
+
+.recommendation-empty__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 82px;
+    height: 82px;
+    margin-bottom: 22px;
+
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+
+    background: var(--red);
+    border-radius: 50%;
+}
+
+.recommendation-empty h2 {
+    margin-bottom: 12px;
+
+    font-size: 24px;
+}
+
+.recommendation-empty p {
+    max-width: 330px;
+
+    color: var(--sub-text);
+    line-height: 1.75;
+}
+
+.recommendation-empty button {
+    margin-top: 24px;
+    padding: 13px 28px;
+
+    color: var(--white);
+    font-weight: 800;
+
+    appearance: none;
+    background: var(--red);
+    border: 0;
+    border-radius: 9px;
+
+    cursor: pointer;
+}
+
+
+/* ========================================
+   スクロールバー
+======================================== */
+
+.left-content::-webkit-scrollbar,
+.record-panel--right::-webkit-scrollbar,
+.center-content::-webkit-scrollbar,
+.table-scroll::-webkit-scrollbar,
+.weight-chart::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.left-content::-webkit-scrollbar-thumb,
+.record-panel--right::-webkit-scrollbar-thumb,
+.center-content::-webkit-scrollbar-thumb,
+.table-scroll::-webkit-scrollbar-thumb,
+.weight-chart::-webkit-scrollbar-thumb {
+    background: #999999;
+    border-radius: 999px;
+}
+
+.left-content::-webkit-scrollbar-track,
+.record-panel--right::-webkit-scrollbar-track,
+.center-content::-webkit-scrollbar-track,
+.table-scroll::-webkit-scrollbar-track,
+.weight-chart::-webkit-scrollbar-track {
+    background: #e9e9e9;
+}
+
+
+/* ========================================
+   高さが低い画面
+======================================== */
+
+@media (max-height: 750px) and (min-width: 901px) {
+
+    body .record-header {
+        padding: 6px;
+    }
+
+    body .record-header__button {
+        min-height: 44px;
+    }
+
+    .record-view-tabs {
+        margin-top: 7px;
+    }
+
+    .record-view-tabs__button {
+        min-height: 37px;
+    }
+
+    .panel-heading {
+        padding: 13px 16px;
+    }
+
+    .record-section {
+        padding: 13px 16px;
+    }
+
+    .record-item {
+        padding: 9px 11px;
+    }
+
+    .metric-grid {
+        padding: 13px 16px;
+    }
+
+    .metric-card {
+        padding: 12px;
+    }
+
+    .center-content {
+        padding: 10px 18px;
+    }
+
+    .calendar-grid {
+        min-height: 245px;
+    }
+
+    .calendar-arrow {
+        width: 44px;
+        height: 44px;
+    }
+
+    .weight-chart,
+    .calorie-chart {
+        min-height: 245px;
+    }
+}
+
+
+/* ========================================
+   タブレット
+======================================== */
+
+@media (max-width: 900px) {
+
+    html {
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+    }
+
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+    }
+
+    body {
+        overflow: visible;
+    }
+
+    .record-page {
+        height: auto;
+        min-height: 100dvh;
+    }
+
+    body .record-header__navigation {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body .record-header__button {
+        min-height: 48px;
+        font-size: 16px;
+    }
+
+    .record-dashboard {
+        grid-template-columns: 1fr;
+
+        overflow: visible;
+    }
+
+    .record-panel {
+        height: auto;
+    }
+
+    .record-panel--left,
+    .record-panel--right {
+        max-height: 650px;
+    }
+
+    .record-panel--center {
+        height: 720px;
+    }
+
+    .calorie-chart {
+        grid-template-columns: 1fr;
+    }
+
+    .calorie-donut {
+        width: min(70vw, 300px);
+    }
+
+    .calorie-chart__legend {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+}
+
+
+/* ========================================
+   スマートフォン
+======================================== */
+
+@media (max-width: 560px) {
+
+    body .record-header {
+        padding: 5px;
+    }
+
+    body .record-header__navigation {
+        gap: 4px;
+    }
+
+    body .record-header__button {
+        padding: 7px 4px;
+
+        font-size: 14px;
+    }
+
+    .record-dashboard {
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .record-panel--center {
+        height: 680px;
+    }
+
+    .panel-heading {
+        padding: 14px;
+    }
+
+    .metric-grid {
+        grid-template-columns: 1fr;
+
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .metric-card--wide {
+        grid-column: auto;
+    }
+
+    .record-view-tabs {
+        width: calc(100% - 18px);
+        margin-top: 8px;
+        padding: 4px;
+        gap: 3px;
+    }
+
+    .record-view-tabs__button {
+        min-height: 40px;
+        padding: 5px 3px;
+
+        font-size: 12px;
+    }
+
+    .record-view-tabs__icon {
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .center-content {
+        padding: 10px;
+    }
+
+    .calendar-toolbar {
+        grid-template-columns: 46px 1fr 46px;
+    }
+
+    .calendar-arrow {
+        width: 44px;
+        height: 44px;
+    }
+
+    .calendar-grid {
+        min-height: 285px;
+    }
+
+    .calendar-day {
+        padding: 5px;
+
+        font-size: 13px;
+    }
+
+    .calorie-chart__legend {
+        grid-template-columns: 1fr;
+    }
+
+    .record-swipe-guide {
+        grid-template-columns: 1fr;
+    }
+
+    .record-swipe-guide span:first-child,
+    .record-swipe-guide span:last-child {
+        display: none;
+    }
+}
+/* 食事チャット */
+[hidden] { display: none !important; }
+.record-dashboard--chat .meal-chat { grid-column: span 2; }
+.meal-chat { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; background: var(--panel); }
+.meal-chat__heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.meal-chat__heading h1 { margin-top: 5px; font-size: clamp(18px, 2vw, 26px); }
+.meal-chat__messages { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 24px; }
+.meal-chat__message { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+.meal-chat__avatar { display: grid; place-items: center; flex: 0 0 38px; height: 38px; border-radius: 50%; background: var(--red); color: var(--white); font-size: 12px; font-weight: 700; }
+.meal-chat__bubble { max-width: 85%; padding: 20px; background: var(--white); line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.meal-chat__message--user { flex-direction: row-reverse; }
+.meal-chat__message--user .meal-chat__avatar { background: var(--black); }
+.meal-chat__message--user .meal-chat__bubble { background: var(--red-light); }
+.meal-chat__composer { padding: 16px 24px 20px; }
+.meal-chat__recommend { max-width: 100%; padding: 12px 16px; border: 1px solid var(--red); background: var(--white); color: var(--red-dark); font-weight: 700; text-align: left; cursor: pointer; }
+.meal-chat__status { min-height: 24px; padding: 5px 0; font-size: 13px; color: var(--red-dark); }
+.meal-chat__composer label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; }
+.meal-chat__input-row { display: flex; align-items: flex-end; gap: 8px; padding: 10px; background: var(--white); }
+.meal-chat__input-row textarea { flex: 1; min-width: 0; max-height: 160px; padding: 8px; border: 0; resize: vertical; background: transparent; line-height: 1.6; }
+.meal-chat__input-row button { width: 44px; height: 44px; flex-shrink: 0; border: 0; background: var(--red); color: var(--white); font-size: 26px; cursor: pointer; }
+.meal-chat button:disabled { opacity: .55; cursor: wait; }
+.meal-chat :focus-visible { outline: 3px solid var(--red-dark); outline-offset: 3px; }
+.meal-chat__hint { margin-top: 8px; font-size: 12px; color: var(--sub-text); }
+@media (max-width: 900px) {
+    .record-dashboard--chat .meal-chat { grid-column: auto; }
+    .meal-chat { height: 75dvh; min-height: 460px; }
+}
+@media (max-width: 560px) {
+    .meal-chat__heading, .meal-chat__messages, .meal-chat__composer { padding: 14px; }
+    .meal-chat__bubble { padding: 12px; max-width: calc(100% - 44px); }
+    .meal-chat__message { gap: 8px; }
+    .meal-chat__recommend { font-size: 13px; }
+}

@@ -1,0 +1,129 @@
+:root {
+    color-scheme: light;
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    color: #111;
+    background: #202020;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.login-layout {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    width: min(1100px, 100%);
+    background: #d9d9d9;
+}
+
+.login-artwork {
+    aspect-ratio: 10 / 9;
+    align-self: center;
+    background: #650000;
+}
+
+.login-artwork img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.login-panel {
+    min-width: 0;
+    padding: clamp(20px, 3vw, 38px) clamp(16px, 2.2vw, 30px);
+}
+
+h1 {
+    margin: 0;
+    text-align: center;
+    font-size: clamp(28px, 3vw, 38px);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: .06em;
+}
+
+form { margin-top: clamp(36px, 5.5vw, 72px); }
+
+.login-field + .login-field { margin-top: 30px; }
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: clamp(14px, 1.6vw, 20px);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+input {
+    display: block;
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid #8a8a8a;
+    border-radius: 0;
+    background: transparent;
+    color: #111;
+    font: inherit;
+    font-size: 16px;
+}
+
+button { font: inherit; cursor: pointer; }
+
+input:focus-visible, button:focus-visible {
+    outline: 3px solid #007a9c;
+    outline-offset: 3px;
+}
+
+.registration-row { margin-top: 14px; text-align: right; }
+
+.registration-link {
+    min-height: 44px;
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: #007d9f;
+    font-size: clamp(14px, 1.6vw, 19px);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.registration-link:hover { color: #005d77; }
+
+.login-submit {
+    width: 100%;
+    min-height: 46px;
+    margin-top: 24px;
+    border: 1px solid #a60000;
+    border-radius: 0;
+    background: #bd0808;
+    color: #fff;
+    font-size: 18px;
+}
+
+.login-submit:hover { background: #980000; }
+.login-submit:disabled { opacity: .55; cursor: default; }
+
+.login-status {
+    margin: 12px 0 0;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.login-status:empty { display: none; }
+
+@media (max-width: 640px) {
+    body { padding: 16px; }
+    .login-layout { grid-template-columns: 1fr; max-width: 430px; }
+    .login-panel { padding: 28px 24px 32px; }
+    form { margin-top: 30px; }
+    label, .registration-link { font-size: 16px; }
+}

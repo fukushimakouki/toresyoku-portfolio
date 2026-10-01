@@ -1,0 +1,30 @@
+/* テーマカラーは画面の外枠と背景に適用する。 */
+body .record-header, .record-dashboard { background: var(--frame-color, var(--red)); }
+.profile-panel { min-width: 0; overflow-y: auto; padding: 18px 14px; }
+.profile-section + .profile-section { margin-top: 26px; }
+.profile-section h1, .profile-section h2 {
+    margin: 0 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--black);
+    font-size: clamp(17px, 1.5vw, 23px);
+    font-weight: 500;
+}
+.profile-field { display: grid; grid-template-columns: auto minmax(0, 1fr) 26px; align-items: center; gap: 6px; margin: 10px 0; }
+.profile-field label { min-width: 5.5em; text-align: right; }
+.profile-field input { width: 100%; min-width: 0; padding: 6px; border: 1px solid #888; border-radius: 0; background: #fff; }
+.profile-reset { margin-top: 12px; padding: 8px 12px; border: 1px solid var(--black); background: #fff; font-size: 13px; cursor: pointer; }
+.profile-palette { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); margin: 24px 0 16px; }
+.profile-swatch { aspect-ratio: 1; min-width: 0; padding: 0; border: 0; background: var(--swatch); cursor: pointer; }
+.profile-swatch[aria-checked="true"] { position: relative; outline: 2px solid #fff; outline-offset: -3px; box-shadow: inset 0 0 0 4px #151515; }
+.profile-color-field { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+#profile-color { width: 42px; height: 32px; padding: 2px; border: 1px solid #777; cursor: pointer; }
+#profile-color-value { font-variant-numeric: tabular-nums; }
+.profile-hint, .profile-status { margin-top: 16px; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.profile-status:empty { display: none; }
+.profile-panel :focus-visible { position: relative; outline: 3px solid #151515; outline-offset: 2px; }
+.record-dashboard--profile .record-panel--left { overflow-y: auto; }
+@media (max-width: 900px) {
+    .record-dashboard--profile { display: flex; flex-direction: column; }
+    .record-dashboard--profile .profile-panel { order: -1; overflow: visible; }
+    .profile-palette { max-width: 360px; }
+}

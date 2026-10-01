@@ -1,0 +1,68 @@
+/* main の提案フォームを記録画面と共通の色・パネルで表示する。 */
+body.suggestion-page { height: auto; min-height: 100dvh; overflow: auto; background: var(--red); }
+body .suggestion-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 28px; }
+.suggestion-brand { color: var(--white); font-size: 28px; font-weight: 800; text-decoration: none; }
+.suggestion-header > span { color: var(--white); font-size: 14px; }
+.suggestion-layout { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.6fr); gap: 8px; max-width: 1280px; margin: auto; padding: 8px; }
+.suggestion-intro { padding: clamp(24px, 4vw, 48px); }
+.suggestion-intro h1 { margin: 24px 0; font-size: clamp(27px, 3vw, 40px); line-height: 1.5; }
+.suggestion-intro > p { line-height: 1.9; }
+.suggestion-steps { display: grid; gap: 26px; margin: 40px 0; padding-left: 24px; }
+.suggestion-steps li { padding-left: 8px; }
+.suggestion-steps li::marker { color: var(--red-dark); font-weight: 800; }
+.suggestion-steps strong, .suggestion-steps span { display: block; }
+.suggestion-steps span { margin-top: 8px; font-size: 13px; line-height: 1.7; }
+.suggestion-card { background: var(--panel-light); }
+.suggestion-card .panel-heading { position: static; }
+.suggestion-form { padding: clamp(18px, 3vw, 32px); }
+.suggestion-section-title { margin: 4px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--black); font-size: 18px; }
+.suggestion-field + .suggestion-section-title { margin-top: 28px; }
+.suggestion-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+.suggestion-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; margin-bottom: 18px; }
+.suggestion-field label { font-size: 14px; font-weight: 700; }
+.suggestion-field small { margin-left: 5px; color: var(--sub-text); font-weight: 400; }
+.suggestion-field input, .suggestion-field select, .suggestion-field textarea {
+    width: 100%; min-width: 0; padding: 11px 12px; color: var(--black); background: var(--white);
+    border: 1px solid #888; border-radius: 0; font: inherit; font-size: 16px;
+}
+.suggestion-field textarea { min-height: 110px; resize: vertical; line-height: 1.7; }
+.suggestion-field [aria-invalid="true"] { border: 2px solid var(--red-dark); }
+.suggestion-help { color: #555; font-size: 12px; line-height: 1.7; }
+.suggestion-error { color: #a60018; font-size: 13px; line-height: 1.6; }
+.suggestion-error:empty { display: none; }
+.suggestion-error-summary { margin-bottom: 24px; padding: 14px; color: #a60018; background: var(--red-light); border-left: 4px solid var(--red-dark); line-height: 1.7; }
+.suggestion-submit { width: 100%; padding: 15px 18px; color: var(--white); background: var(--black); border: 2px solid var(--black); font: inherit; font-weight: 700; cursor: pointer; }
+.suggestion-submit:hover { background: var(--red-dark); }
+.suggestion-submit:disabled { opacity: .65; cursor: wait; }
+[data-submit-status] { margin-top: 10px; }
+.suggestion-form :focus-visible, .suggestion-context :focus-visible, .suggestion-brand:focus-visible { outline: 3px solid var(--red-dark); outline-offset: 3px; }
+.suggestion-notices { display: grid; gap: 8px; padding: 14px 18px 0; }
+.suggestion-notices:empty { display: none; }
+.suggestion-notices .notice { padding: 12px; border-left: 3px solid var(--red-dark); background: var(--white); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.suggestion-context { margin: 16px 18px; padding: 14px; background: var(--panel-light); }
+.suggestion-context > p { margin-bottom: 12px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.suggestion-context summary { font-size: 13px; font-weight: 700; cursor: pointer; }
+.suggestion-context dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 12px; font-size: 12px; line-height: 1.7; }
+.suggestion-context dt { color: var(--sub-text); }
+.suggestion-context dd { margin: 0; overflow-wrap: anywhere; }
+.suggestion-edit { width: 100%; margin-top: 12px; padding: 9px; background: var(--white); border: 1px solid var(--black); font: inherit; font-size: 13px; cursor: pointer; }
+.profile-panel .suggestion-grid { grid-template-columns: 1fr; }
+.profile-panel .suggestion-section-title { margin-top: 22px; }
+.profile-panel .suggestion-submit { margin-top: 18px; }
+@media (min-width: 901px) and (max-width: 1024px) {
+    .record-dashboard { grid-template-columns: minmax(0, .9fr) minmax(0, 1.5fr) minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+    .suggestion-layout { grid-template-columns: 1fr; }
+    .suggestion-intro { padding: 24px; }
+    .suggestion-intro h1 { margin: 12px 0; }
+    .suggestion-intro h1 br { display: none; }
+    .suggestion-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 26px 0; }
+    .profile-panel .suggestion-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+    body .suggestion-header { padding: 14px 18px; }
+    .suggestion-header > span { max-width: 12em; font-size: 12px; }
+    .suggestion-steps, .suggestion-grid, .profile-panel .suggestion-grid { grid-template-columns: 1fr; }
+    .suggestion-steps { gap: 16px; }
+}
