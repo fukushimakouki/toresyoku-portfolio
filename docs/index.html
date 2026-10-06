@@ -1,0 +1,4759 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>記録一覧｜トレ食</title>
+
+    <style>:root {
+    --red: #ef233c;
+    --red-dark: #c9001d;
+    --red-light: #ffe6ea;
+
+    --black: #151515;
+    --white: #ffffff;
+
+    --page-background: #1d1d1d;
+    --panel: #d8d8d8;
+    --panel-light: #f8f8f8;
+    --border: #b9b9b9;
+    --sub-text: #6b6b6b;
+
+    --weight: #9a5f3c;
+    --calorie: #f49b0b;
+
+    --good: #07885f;
+    --bad: #d91f36;
+}
+
+
+/* ========================================
+   リセット
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+
+    color: var(--black);
+    background: var(--page-background);
+
+    font-family:
+        "Yu Gothic",
+        "Hiragino Kaku Gothic ProN",
+        "Meiryo",
+        sans-serif;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    color: inherit;
+}
+
+h1,
+h2,
+p {
+    margin: 0;
+}
+
+
+/* ========================================
+   ページ全体
+======================================== */
+
+.record-page {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+}
+
+
+/* ========================================
+   ヘッダー
+======================================== */
+
+body .record-header {
+    flex: 0 0 auto;
+
+    width: 100%;
+    padding: 9px;
+
+    background: var(--red);
+    border-bottom: 2px solid var(--black);
+
+    isolation: isolate;
+}
+
+body .record-header__navigation {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body .record-header__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 54px;
+    margin: 0;
+    padding: 8px 12px;
+
+    color: var(--black);
+    font-size: clamp(17px, 1.45vw, 25px);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+
+    appearance: none;
+    background: #eeeeee;
+    border: 2px solid transparent;
+    border-radius: 0;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        border-color 0.2s,
+        transform 0.2s;
+}
+
+body .record-header__button:hover {
+    color: var(--red-dark);
+
+    background: var(--white);
+    border-color: var(--red-dark);
+}
+
+body .record-header__button:active {
+    transform: translateY(1px);
+}
+
+/* ========================================
+   3列レイアウト
+======================================== */
+
+.record-dashboard {
+    display: grid;
+
+    grid-template-columns:
+        minmax(255px, 0.9fr)
+        minmax(430px, 1.5fr)
+        minmax(290px, 1fr);
+
+    flex: 1;
+    min-height: 0;
+
+    gap: 8px;
+    padding: 8px;
+
+    overflow: hidden;
+
+    background: var(--red);
+}
+
+.record-panel {
+    min-width: 0;
+    min-height: 0;
+
+    background: var(--panel);
+}
+
+.record-panel--left {
+    height: 100%;
+    overflow: hidden;
+}
+
+.record-panel--center {
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    overflow: hidden;
+
+    background: var(--panel-light);
+}
+
+.record-panel--right {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+
+/* ========================================
+   共通パーツ
+======================================== */
+
+.panel-heading {
+    position: sticky;
+    z-index: 10;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 18px 20px;
+
+    background: var(--panel);
+    border-bottom: 2px solid var(--border);
+}
+
+.panel-heading h1 {
+    font-size: clamp(21px, 1.7vw, 29px);
+    line-height: 1.25;
+}
+
+.eyebrow {
+    margin-bottom: 4px;
+
+    color: var(--red-dark);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    padding: 5px 11px;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    border-radius: 999px;
+}
+
+.badge--red {
+    color: var(--white);
+    background: var(--red);
+}
+
+.badge--meal {
+    color: var(--red-dark);
+    background: var(--red-light);
+}
+
+.badge--black {
+    color: var(--white);
+    background: var(--black);
+}
+
+.badge--weight {
+    color: var(--white);
+    background: var(--weight);
+}
+
+.badge--calorie {
+    color: var(--white);
+    background: var(--calorie);
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 14px;
+}
+
+.section-heading h2 {
+    font-size: clamp(18px, 1.45vw, 25px);
+}
+
+
+/* ========================================
+   左側の切り替え
+======================================== */
+
+.left-content {
+    display: none;
+
+    width: 100%;
+    height: 100%;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.left-content--active {
+    display: block;
+}
+
+
+/* ========================================
+   食事・運動記録
+======================================== */
+
+.record-section {
+    padding: 18px 20px;
+
+    border-bottom: 2px solid var(--border);
+}
+
+.record-list {
+    display: grid;
+    gap: 10px;
+}
+
+.record-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 13px 14px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 9px;
+}
+
+.record-item span {
+    min-width: 0;
+
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.record-item strong {
+    flex: 0 0 auto;
+}
+
+.record-item__category {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--sub-text);
+    font-size: 12px;
+}
+
+.record-item--nutrients {
+    flex-wrap: wrap;
+}
+
+.record-item__nutrients {
+    flex-basis: 100%;
+    color: var(--sub-text);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.empty-record {
+    padding: 22px 14px;
+
+    color: var(--sub-text);
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px dashed #999999;
+    border-radius: 9px;
+}
+
+.summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-top: 15px;
+    padding-top: 14px;
+
+    border-top: 1px solid #a5a5a5;
+}
+
+.summary-row strong {
+    font-size: clamp(18px, 1.5vw, 25px);
+}
+
+.balance-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    margin: 18px 20px;
+    padding: 20px;
+
+    background: var(--white);
+    border-left: 7px solid var(--red);
+}
+
+.balance-card span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 18px;
+}
+
+.balance-card small {
+    color: var(--sub-text);
+}
+
+.balance-card strong {
+    color: var(--red-dark);
+
+    font-size: clamp(22px, 1.9vw, 31px);
+}
+
+
+/* ========================================
+   左側の数値カード
+======================================== */
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    padding: 18px 20px;
+}
+
+.metric-card {
+    min-width: 0;
+    padding: 16px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 10px;
+}
+
+.metric-card--wide {
+    grid-column: 1 / -1;
+}
+
+.metric-card span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.metric-card strong {
+    display: block;
+
+    font-size: clamp(18px, 1.5vw, 26px);
+    overflow-wrap: anywhere;
+}
+
+.metric-card strong.is-down {
+    color: var(--good);
+}
+
+.metric-card strong.is-up {
+    color: var(--bad);
+}
+
+.meal-text {
+    color: var(--red);
+}
+
+.workout-text {
+    color: var(--black);
+}
+
+.selected-data-date {
+    margin: 16px 20px 0;
+    padding: 11px 14px;
+
+    color: var(--red-dark);
+    font-weight: 800;
+
+    background: var(--white);
+    border-left: 5px solid var(--red);
+}
+
+
+/* ========================================
+   履歴テーブル
+======================================== */
+
+.history-section {
+    padding: 0 20px 22px;
+}
+
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 9px;
+}
+
+.history-table {
+    width: 100%;
+    min-width: 310px;
+
+    border-collapse: collapse;
+}
+
+.history-table--calorie {
+    min-width: 410px;
+}
+
+.history-table th,
+.history-table td {
+    padding: 11px 9px;
+
+    text-align: right;
+    white-space: nowrap;
+
+    border-bottom: 1px solid #c5c5c5;
+}
+
+.history-table th:first-child,
+.history-table td:first-child {
+    text-align: left;
+}
+
+.history-table th {
+    font-size: 12px;
+
+    background: #eeeeee;
+}
+
+.history-table tbody tr {
+    cursor: pointer;
+}
+
+.history-table tbody tr:hover {
+    background: var(--white);
+}
+
+.history-table tbody tr.is-selected {
+    color: var(--red-dark);
+    font-weight: 800;
+
+    background: var(--red-light);
+}
+
+
+/* ========================================
+   中央の表示切り替えボタン
+======================================== */
+
+.record-view-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    flex: 0 0 auto;
+
+    width: min(560px, calc(100% - 36px));
+    margin: 12px auto 5px;
+    padding: 5px;
+    gap: 5px;
+
+    background: #e8e8e8;
+    border: 1px solid #d1d1d1;
+    border-radius: 14px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.09);
+}
+
+.record-view-tabs__button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 7px 10px;
+
+    color: #565656;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s,
+        background-color 0.2s,
+        box-shadow 0.2s,
+        transform 0.2s;
+}
+
+.record-view-tabs__button:hover {
+    color: var(--red-dark);
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.record-view-tabs__button:active {
+    transform: translateY(1px);
+}
+
+.record-view-tabs__button--active {
+    color: var(--white);
+
+    background: var(--red);
+
+    box-shadow:
+        0 3px 8px rgba(239, 35, 60, 0.3);
+}
+
+.record-view-tabs__button--active:hover {
+    color: var(--white);
+    background: var(--red-dark);
+}
+
+.record-view-tabs__icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+
+/* ========================================
+   中央の横スライド
+======================================== */
+
+.record-view-viewport {
+    flex: 1;
+    min-height: 0;
+
+    overflow: hidden;
+
+    touch-action: pan-y;
+}
+
+.record-view-track {
+    display: flex;
+
+    width: 100%;
+    height: 100%;
+
+    transform: translateX(0);
+
+    transition: transform 0.38s ease;
+}
+
+.center-content {
+    flex: 0 0 100%;
+
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    padding: 14px 22px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.record-swipe-guide {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+
+    flex: 0 0 auto;
+
+    min-height: 34px;
+    padding: 6px 18px;
+
+    color: #777777;
+    font-size: 12px;
+
+    background: var(--panel-light);
+    border-top: 1px solid #dddddd;
+}
+
+.record-swipe-guide span:first-child {
+    text-align: left;
+}
+
+.record-swipe-guide span:last-child {
+    text-align: right;
+}
+
+.record-swipe-guide__main {
+    text-align: center;
+}
+
+
+/* ========================================
+   カレンダー
+======================================== */
+
+.calendar-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-toolbar {
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+    gap: 12px;
+
+    flex: 0 0 auto;
+
+    margin-bottom: 12px;
+}
+
+.calendar-title {
+    text-align: center;
+}
+
+.calendar-title h2 {
+    font-size: clamp(21px, 1.8vw, 29px);
+}
+
+.calendar-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+    padding: 0;
+
+    color: var(--white);
+    font-size: 33px;
+    line-height: 1;
+
+    appearance: none;
+    background: var(--red);
+    border: 0;
+    border-radius: 11px;
+
+    cursor: pointer;
+}
+
+.calendar-arrow:hover {
+    background: var(--red-dark);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+
+    flex: 0 0 auto;
+
+    border-top: 1px solid #d4d4d4;
+    border-left: 1px solid #d4d4d4;
+}
+
+.calendar-weekdays span {
+    padding: 9px 3px;
+
+    font-weight: 800;
+    text-align: center;
+
+    background: #f2f2f2;
+    border-right: 1px solid #d4d4d4;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.weekday-sunday {
+    color: var(--red);
+}
+
+.weekday-saturday {
+    color: #2563eb;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, minmax(44px, 1fr));
+
+    flex: 1;
+    min-height: 295px;
+
+    border-left: 1px solid #d4d4d4;
+}
+
+.calendar-day {
+    position: relative;
+
+    min-width: 0;
+    min-height: 0;
+    padding: 7px;
+
+    font-weight: 800;
+
+    appearance: none;
+    background: var(--white);
+    border: 0;
+    border-right: 1px solid #d4d4d4;
+    border-bottom: 1px solid #d4d4d4;
+
+    cursor: pointer;
+}
+
+.calendar-day:hover {
+    color: var(--red-dark);
+    background: var(--red-light);
+}
+
+.calendar-day.is-outside {
+    color: #b2b2b2;
+    background: #eeeeee;
+}
+
+.calendar-day.is-selected {
+    color: var(--white);
+    background: var(--red);
+}
+
+.calendar-day.is-today {
+    box-shadow: inset 0 0 0 3px var(--black);
+}
+
+.calendar-day__dot {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+
+    display: none;
+
+    width: 8px;
+    height: 8px;
+
+    background: var(--red);
+    border-radius: 50%;
+
+    transform: translateX(-50%);
+}
+
+.calendar-day.has-record .calendar-day__dot {
+    display: block;
+}
+
+.calendar-day.is-selected .calendar-day__dot {
+    background: var(--white);
+}
+
+.calendar-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    flex: 0 0 auto;
+
+    padding: 11px 4px 0;
+
+    color: #666666;
+    font-size: 13px;
+}
+
+.calendar-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.legend-dot {
+    display: inline-block;
+
+    width: 11px;
+    height: 11px;
+
+    border-radius: 50%;
+}
+
+.legend-dot--selected {
+    background: var(--red);
+}
+
+.legend-dot--record {
+    background: var(--white);
+    border: 3px solid var(--red);
+}
+
+.legend-dot--today {
+    background: var(--white);
+    border: 3px solid var(--black);
+}
+
+
+/* ========================================
+   グラフ共通
+======================================== */
+
+.graph-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.graph-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    flex: 0 0 auto;
+}
+
+.graph-heading h2 {
+    font-size: clamp(22px, 2vw, 31px);
+}
+
+.graph-heading p:last-child {
+    margin-top: 4px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+}
+
+.graph-message {
+    flex: 0 0 auto;
+
+    padding: 14px 18px;
+
+    text-align: center;
+
+    background: var(--white);
+    border-left: 6px solid var(--red);
+    border-radius: 6px;
+}
+
+
+/* ========================================
+   体重グラフ
+======================================== */
+
+.weight-chart {
+    position: relative;
+
+    flex: 1;
+    min-height: 290px;
+    padding: 26px 18px 14px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: var(--white);
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+}
+
+.weight-chart__grid {
+    position: absolute;
+    inset: 24px 18px 42px;
+
+    background:
+        repeating-linear-gradient(
+            to top,
+            transparent 0,
+            transparent calc(20% - 1px),
+            #dddddd calc(20% - 1px),
+            #dddddd 20%
+        );
+
+    border-bottom: 2px solid #aaaaaa;
+
+    pointer-events: none;
+}
+
+.weight-bars {
+    --weight-gap: clamp(4px, 0.8vw, 12px);
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: repeat(var(--weight-count, 12), minmax(32px, 1fr));
+    gap: var(--weight-gap);
+
+    width: 100%;
+    min-width: max(500px, calc(var(--weight-count, 12) * (32px + var(--weight-gap)) - var(--weight-gap)));
+    height: 100%;
+}
+
+.weight-bar-item {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 28px;
+
+    min-width: 0;
+}
+
+.weight-bar-space {
+    position: relative;
+}
+
+/* 日付ラベルの28pxを除き、棒と同じ高さの領域に目標線を重ねる。 */
+.weight-target-overlay {
+    position: absolute;
+    inset: 0 0 28px;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.weight-target-line {
+    position: absolute;
+    right: 0;
+    bottom: var(--target-height);
+    left: 0;
+    height: 0;
+    border-top: 2px solid #087f8c;
+}
+
+.weight-target-label {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    padding: 3px 6px;
+    color: #07636d;
+    background: #fff;
+    border: 1px solid #087f8c;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.weight-bar {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+
+    width: min(34px, 74%);
+    height: var(--bar-height, 50%);
+
+    appearance: none;
+    background: var(--frame-color, var(--red));
+
+    border: 0;
+    border-radius: 8px 8px 2px 2px;
+
+    cursor: pointer;
+
+    transform: translateX(-50%);
+}
+
+.weight-bar:hover,
+.weight-bar.is-selected {
+    filter: brightness(1.12);
+}
+
+.weight-bar.is-selected {
+    outline: 3px solid var(--frame-color, var(--red));
+    outline-offset: 2px;
+}
+
+.weight-bar-value {
+    position: absolute;
+    bottom: calc(var(--bar-height, 50%) + 5px);
+    left: 50%;
+
+    color: #75432b;
+    font-size: 11px;
+    font-weight: 800;
+    white-space: nowrap;
+
+    transform: translateX(-50%);
+}
+
+.weight-bar-date {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+
+    padding-bottom: 2px;
+
+    color: #555555;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* ========================================
+   カロリー円グラフ
+======================================== */
+
+.calorie-chart {
+    display: grid;
+    grid-template-columns: minmax(235px, 1.1fr) minmax(190px, 0.9fr);
+    align-items: center;
+    gap: 24px;
+
+    flex: 1;
+    min-height: 300px;
+    padding: 24px;
+
+    background: var(--white);
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+}
+
+.donut-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calorie-donut {
+    --intake-angle: 180deg;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: min(30vw, 320px);
+    max-width: 100%;
+    aspect-ratio: 1;
+
+    background:
+        conic-gradient(
+            var(--red) 0deg var(--intake-angle),
+            var(--black) var(--intake-angle) 360deg
+        );
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 1px #dddddd,
+        0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+.calorie-donut.is-empty {
+    background: #dddddd;
+}
+
+.calorie-donut__center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 58%;
+    aspect-ratio: 1;
+
+    text-align: center;
+
+    background: var(--white);
+    border-radius: 50%;
+}
+
+.calorie-donut__center span {
+    margin-bottom: 7px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+}
+
+.calorie-donut__center strong {
+    color: var(--red-dark);
+
+    font-size: clamp(18px, 2vw, 29px);
+}
+
+.calorie-chart__legend {
+    display: grid;
+    gap: 14px;
+}
+
+.calorie-legend-card {
+    display: grid;
+    grid-template-columns: 15px 1fr;
+    gap: 12px;
+
+    padding: 16px;
+
+    background: #f3f3f3;
+    border-radius: 10px;
+}
+
+.calorie-mark {
+    width: 14px;
+    min-height: 58px;
+
+    border-radius: 999px;
+}
+
+.calorie-mark--intake {
+    background: var(--red);
+}
+
+.calorie-mark--burned {
+    background: var(--black);
+}
+
+.calorie-legend-card small {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--sub-text);
+}
+
+.calorie-legend-card strong {
+    display: block;
+
+    font-size: clamp(18px, 1.7vw, 26px);
+}
+
+.calorie-legend-card p {
+    margin-top: 4px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+}
+
+
+/* ========================================
+   AIおすすめ
+======================================== */
+
+.ai-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    color: var(--white);
+    font-weight: 800;
+
+    background: var(--red);
+    border-radius: 50%;
+}
+
+.recommendation-content {
+    display: none;
+    flex-direction: column;
+}
+
+.recommendation-content--visible {
+    display: flex;
+}
+
+.recommendation-section {
+    padding: 18px 20px;
+
+    border-bottom: 2px solid var(--border);
+}
+
+.menu-card {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    align-items: center;
+    gap: 14px;
+
+    margin-top: 11px;
+    padding: 13px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 10px;
+}
+
+.menu-card__label {
+    padding: 10px 8px;
+
+    color: var(--white);
+    font-weight: 800;
+    text-align: center;
+
+    background: var(--red);
+    border-radius: 8px;
+}
+
+.training-card {
+    margin-top: 11px;
+    padding: 15px;
+
+    background: rgba(255, 255, 255, 0.75);
+    border-radius: 10px;
+}
+
+.training-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.training-card__top span {
+    padding: 5px 9px;
+
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 800;
+
+    background: var(--black);
+    border-radius: 999px;
+}
+
+.training-card p {
+    margin-top: 8px;
+
+    color: var(--sub-text);
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.ai-comment {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    align-items: center;
+    gap: 15px;
+
+    margin: 20px;
+    padding: 18px;
+
+    background: var(--white);
+    border-left: 6px solid var(--red);
+}
+
+.ai-comment span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 50px;
+    height: 50px;
+
+    color: var(--white);
+    font-weight: 800;
+
+    background: var(--red);
+    border-radius: 50%;
+}
+
+
+/* ========================================
+   メニュー未設定
+======================================== */
+
+.recommendation-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: calc(100% - 100px);
+    padding: 36px 24px;
+
+    text-align: center;
+}
+
+.recommendation-empty__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 82px;
+    height: 82px;
+    margin-bottom: 22px;
+
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+
+    background: var(--red);
+    border-radius: 50%;
+}
+
+.recommendation-empty h2 {
+    margin-bottom: 12px;
+
+    font-size: 24px;
+}
+
+.recommendation-empty p {
+    max-width: 330px;
+
+    color: var(--sub-text);
+    line-height: 1.75;
+}
+
+.recommendation-empty button {
+    margin-top: 24px;
+    padding: 13px 28px;
+
+    color: var(--white);
+    font-weight: 800;
+
+    appearance: none;
+    background: var(--red);
+    border: 0;
+    border-radius: 9px;
+
+    cursor: pointer;
+}
+
+
+/* ========================================
+   スクロールバー
+======================================== */
+
+.left-content::-webkit-scrollbar,
+.record-panel--right::-webkit-scrollbar,
+.center-content::-webkit-scrollbar,
+.table-scroll::-webkit-scrollbar,
+.weight-chart::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.left-content::-webkit-scrollbar-thumb,
+.record-panel--right::-webkit-scrollbar-thumb,
+.center-content::-webkit-scrollbar-thumb,
+.table-scroll::-webkit-scrollbar-thumb,
+.weight-chart::-webkit-scrollbar-thumb {
+    background: #999999;
+    border-radius: 999px;
+}
+
+.left-content::-webkit-scrollbar-track,
+.record-panel--right::-webkit-scrollbar-track,
+.center-content::-webkit-scrollbar-track,
+.table-scroll::-webkit-scrollbar-track,
+.weight-chart::-webkit-scrollbar-track {
+    background: #e9e9e9;
+}
+
+
+/* ========================================
+   高さが低い画面
+======================================== */
+
+@media (max-height: 750px) and (min-width: 901px) {
+
+    body .record-header {
+        padding: 6px;
+    }
+
+    body .record-header__button {
+        min-height: 44px;
+    }
+
+    .record-view-tabs {
+        margin-top: 7px;
+    }
+
+    .record-view-tabs__button {
+        min-height: 37px;
+    }
+
+    .panel-heading {
+        padding: 13px 16px;
+    }
+
+    .record-section {
+        padding: 13px 16px;
+    }
+
+    .record-item {
+        padding: 9px 11px;
+    }
+
+    .metric-grid {
+        padding: 13px 16px;
+    }
+
+    .metric-card {
+        padding: 12px;
+    }
+
+    .center-content {
+        padding: 10px 18px;
+    }
+
+    .calendar-grid {
+        min-height: 245px;
+    }
+
+    .calendar-arrow {
+        width: 44px;
+        height: 44px;
+    }
+
+    .weight-chart,
+    .calorie-chart {
+        min-height: 245px;
+    }
+}
+
+
+/* ========================================
+   タブレット
+======================================== */
+
+@media (max-width: 900px) {
+
+    html {
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+    }
+
+    html,
+    body {
+        height: auto;
+        min-height: 100%;
+    }
+
+    body {
+        overflow: visible;
+    }
+
+    .record-page {
+        height: auto;
+        min-height: 100dvh;
+    }
+
+    body .record-header__navigation {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body .record-header__button {
+        min-height: 48px;
+        font-size: 16px;
+    }
+
+    .record-dashboard {
+        grid-template-columns: 1fr;
+
+        overflow: visible;
+    }
+
+    .record-panel {
+        height: auto;
+    }
+
+    .record-panel--left,
+    .record-panel--right {
+        max-height: 650px;
+    }
+
+    .record-panel--center {
+        height: 720px;
+    }
+
+    .calorie-chart {
+        grid-template-columns: 1fr;
+    }
+
+    .calorie-donut {
+        width: min(70vw, 300px);
+    }
+
+    .calorie-chart__legend {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+}
+
+
+/* ========================================
+   スマートフォン
+======================================== */
+
+@media (max-width: 560px) {
+
+    body .record-header {
+        padding: 5px;
+    }
+
+    body .record-header__navigation {
+        gap: 4px;
+    }
+
+    body .record-header__button {
+        padding: 7px 4px;
+
+        font-size: 14px;
+    }
+
+    .record-dashboard {
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .record-panel--center {
+        height: 680px;
+    }
+
+    .panel-heading {
+        padding: 14px;
+    }
+
+    .metric-grid {
+        grid-template-columns: 1fr;
+
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .metric-card--wide {
+        grid-column: auto;
+    }
+
+    .record-view-tabs {
+        width: calc(100% - 18px);
+        margin-top: 8px;
+        padding: 4px;
+        gap: 3px;
+    }
+
+    .record-view-tabs__button {
+        min-height: 40px;
+        padding: 5px 3px;
+
+        font-size: 12px;
+    }
+
+    .record-view-tabs__icon {
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .center-content {
+        padding: 10px;
+    }
+
+    .calendar-toolbar {
+        grid-template-columns: 46px 1fr 46px;
+    }
+
+    .calendar-arrow {
+        width: 44px;
+        height: 44px;
+    }
+
+    .calendar-grid {
+        min-height: 285px;
+    }
+
+    .calendar-day {
+        padding: 5px;
+
+        font-size: 13px;
+    }
+
+    .calorie-chart__legend {
+        grid-template-columns: 1fr;
+    }
+
+    .record-swipe-guide {
+        grid-template-columns: 1fr;
+    }
+
+    .record-swipe-guide span:first-child,
+    .record-swipe-guide span:last-child {
+        display: none;
+    }
+}
+/* 食事チャット */
+[hidden] { display: none !important; }
+.record-dashboard--chat .meal-chat { grid-column: span 2; }
+.meal-chat { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; background: var(--panel); }
+.meal-chat__heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.meal-chat__heading h1 { margin-top: 5px; font-size: clamp(18px, 2vw, 26px); }
+.meal-chat__messages { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 24px; }
+.meal-chat__message { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+.meal-chat__avatar { display: grid; place-items: center; flex: 0 0 38px; height: 38px; border-radius: 50%; background: var(--red); color: var(--white); font-size: 12px; font-weight: 700; }
+.meal-chat__bubble { max-width: 85%; padding: 20px; background: var(--white); line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.meal-chat__message--user { flex-direction: row-reverse; }
+.meal-chat__message--user .meal-chat__avatar { background: var(--black); }
+.meal-chat__message--user .meal-chat__bubble { background: var(--red-light); }
+.meal-chat__composer { padding: 16px 24px 20px; }
+.meal-chat__recommend { max-width: 100%; padding: 12px 16px; border: 1px solid var(--red); background: var(--white); color: var(--red-dark); font-weight: 700; text-align: left; cursor: pointer; }
+.meal-chat__status { min-height: 24px; padding: 5px 0; font-size: 13px; color: var(--red-dark); }
+.meal-chat__composer label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; }
+.meal-chat__input-row { display: flex; align-items: flex-end; gap: 8px; padding: 10px; background: var(--white); }
+.meal-chat__input-row textarea { flex: 1; min-width: 0; max-height: 160px; padding: 8px; border: 0; resize: vertical; background: transparent; line-height: 1.6; }
+.meal-chat__input-row button { width: 44px; height: 44px; flex-shrink: 0; border: 0; background: var(--red); color: var(--white); font-size: 26px; cursor: pointer; }
+.meal-chat button:disabled { opacity: .55; cursor: wait; }
+.meal-chat :focus-visible { outline: 3px solid var(--red-dark); outline-offset: 3px; }
+.meal-chat__hint { margin-top: 8px; font-size: 12px; color: var(--sub-text); }
+@media (max-width: 900px) {
+    .record-dashboard--chat .meal-chat { grid-column: auto; }
+    .meal-chat { height: 75dvh; min-height: 460px; }
+}
+@media (max-width: 560px) {
+    .meal-chat__heading, .meal-chat__messages, .meal-chat__composer { padding: 14px; }
+    .meal-chat__bubble { padding: 12px; max-width: calc(100% - 44px); }
+    .meal-chat__message { gap: 8px; }
+    .meal-chat__recommend { font-size: 13px; }
+}
+</style><style>/* 記録する：赤い枠とグレーの一枚画面 */
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.record-page--entry { --red: #ff0000; --panel: #d9d9d9; }
+.record-page--entry > .notice { display: none; }
+body .record-page--entry .record-header__button { background: var(--panel); }
+.record-dashboard--entry { display: block; padding: 6px 14px 14px 5px; overflow: auto; }
+.record-entry { min-height: 100%; padding: 12px 10px 4px 6px; background: var(--panel); color: #000; font-size: clamp(16px, 2.6vw, 22px); line-height: 1.2; }
+#record-entry-form { min-width: 0; }
+.record-entry h1, .record-entry h2 { font: inherit; }
+.record-entry h1 { padding: 2px 0 9px; border-bottom: 2px solid #222; }
+.record-entry__section { position: relative; display: flex; flex-direction: column; min-height: 136px; padding: 5px 18px 10px 0; border-bottom: 2px solid #222; }
+.record-entry__section::after { position: absolute; content: ""; top: 6px; right: 10px; bottom: 14px; border-right: 1px solid #222; }
+.record-entry__list { max-height: 180px; min-height: 72px; overflow-y: auto; }
+.record-entry__empty { padding: 10px 0; color: #555; font-size: 14px; }
+.record-entry__list:empty { display: none; }
+.record-entry__section-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; }
+.record-entry__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-left: auto; }
+.record-entry__estimate { font-size: 16px; min-height: 36px; }
+.record-entry__estimate-status { flex-basis: 100%; }
+.record-entry__action:disabled { opacity: .55; cursor: wait; }
+.record-entry__action { padding: 5px 12px; border: 0; border-radius: 0; background: var(--red); color: #fff; font: inherit; cursor: pointer; }
+.record-entry__action:hover { background: #c9001d; }
+
+.record-entry__footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 23px 20px 0 0; }
+.record-entry__weight { display: flex; align-items: center; gap: 5px; }
+.record-entry input, .record-entry select { min-width: 0; padding: 2px 4px; border: 0; border-radius: 0; background: #fff; font: inherit; }
+#entry-weight-whole { width: 64px; }
+#entry-weight-decimal { width: 54px; }
+.record-entry__row { display: grid; grid-template-columns: 12px minmax(80px, 1fr) 75px auto 28px; align-items: center; gap: 5px; margin: 4px 0; }
+.record-entry__row--meal { grid-template-columns: 12px minmax(80px, 1fr) 96px 75px auto 28px; }
+.record-entry__row input, .record-entry__row select { width: 100%; font-size: 16px; }
+.record-entry__nutrients { grid-column: 2 / -2; display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 8px; padding: 5px 0 10px; }
+.record-entry__nutrients label { display: grid; gap: 4px; font-size: 13px; line-height: 1.4; }
+#entry-meal-list { max-height: min(52vh, 440px); }
+.record-entry__nutrient-totals { flex-basis: 100%; font-size: 14px; line-height: 1.5; }
+.record-entry__nutrient-totals dl { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 6px 0; }
+.record-entry__nutrient-totals dl > div { display: flex; gap: 6px; }
+.record-entry__nutrient-totals dd { margin: 0; font-weight: 700; }
+.record-entry__remove { padding: 0; border: 0; background: transparent; font: inherit; cursor: pointer; }
+.record-entry__hint { margin-top: 8px; font-size: 12px; color: #555; }
+.record-entry__status { margin-top: 6px; font-size: 14px; }
+.record-entry__status:empty { display: none; }
+.record-entry :focus-visible, .record-page--entry .record-header__button:focus-visible { outline: 2px solid #151515; outline-offset: 2px; }
+@media (max-width: 560px) {
+    .record-entry { padding-right: 6px; }
+    .record-entry__section { padding-right: 0; padding-bottom: 10px; }
+    .record-entry__section::after { display: none; }
+    .record-entry__estimate { font-size: 14px; }
+    .record-entry__footer { padding-right: 0; gap: 8px; }
+    .record-entry__row { grid-template-columns: 8px minmax(65px, 1fr) 58px auto 24px; gap: 3px; }
+    .record-entry__row--meal { grid-template-columns: 8px minmax(65px, 1fr) 76px 58px auto 24px; }
+    .record-entry__nutrients { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .record-entry__action { min-height: 40px; }
+}
+</style><style>/* テーマカラーは画面の外枠と背景に適用する。 */
+body .record-header, .record-dashboard { background: var(--frame-color, var(--red)); }
+.profile-panel { min-width: 0; overflow-y: auto; padding: 18px 14px; }
+.profile-section + .profile-section { margin-top: 26px; }
+.profile-section h1, .profile-section h2 {
+    margin: 0 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--black);
+    font-size: clamp(17px, 1.5vw, 23px);
+    font-weight: 500;
+}
+.profile-field { display: grid; grid-template-columns: auto minmax(0, 1fr) 26px; align-items: center; gap: 6px; margin: 10px 0; }
+.profile-field label { min-width: 5.5em; text-align: right; }
+.profile-field input { width: 100%; min-width: 0; padding: 6px; border: 1px solid #888; border-radius: 0; background: #fff; }
+.profile-reset { margin-top: 12px; padding: 8px 12px; border: 1px solid var(--black); background: #fff; font-size: 13px; cursor: pointer; }
+.profile-palette { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); margin: 24px 0 16px; }
+.profile-swatch { aspect-ratio: 1; min-width: 0; padding: 0; border: 0; background: var(--swatch); cursor: pointer; }
+.profile-swatch[aria-checked="true"] { position: relative; outline: 2px solid #fff; outline-offset: -3px; box-shadow: inset 0 0 0 4px #151515; }
+.profile-color-field { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+#profile-color { width: 42px; height: 32px; padding: 2px; border: 1px solid #777; cursor: pointer; }
+#profile-color-value { font-variant-numeric: tabular-nums; }
+.profile-hint, .profile-status { margin-top: 16px; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.profile-status:empty { display: none; }
+.profile-panel :focus-visible { position: relative; outline: 3px solid #151515; outline-offset: 2px; }
+.record-dashboard--profile .record-panel--left { overflow-y: auto; }
+@media (max-width: 900px) {
+    .record-dashboard--profile { display: flex; flex-direction: column; }
+    .record-dashboard--profile .profile-panel { order: -1; overflow: visible; }
+    .profile-palette { max-width: 360px; }
+}
+</style><style>/* main の提案フォームを記録画面と共通の色・パネルで表示する。 */
+body.suggestion-page { height: auto; min-height: 100dvh; overflow: auto; background: var(--red); }
+body .suggestion-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 28px; }
+.suggestion-brand { color: var(--white); font-size: 28px; font-weight: 800; text-decoration: none; }
+.suggestion-header > span { color: var(--white); font-size: 14px; }
+.suggestion-layout { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.6fr); gap: 8px; max-width: 1280px; margin: auto; padding: 8px; }
+.suggestion-intro { padding: clamp(24px, 4vw, 48px); }
+.suggestion-intro h1 { margin: 24px 0; font-size: clamp(27px, 3vw, 40px); line-height: 1.5; }
+.suggestion-intro > p { line-height: 1.9; }
+.suggestion-steps { display: grid; gap: 26px; margin: 40px 0; padding-left: 24px; }
+.suggestion-steps li { padding-left: 8px; }
+.suggestion-steps li::marker { color: var(--red-dark); font-weight: 800; }
+.suggestion-steps strong, .suggestion-steps span { display: block; }
+.suggestion-steps span { margin-top: 8px; font-size: 13px; line-height: 1.7; }
+.suggestion-card { background: var(--panel-light); }
+.suggestion-card .panel-heading { position: static; }
+.suggestion-form { padding: clamp(18px, 3vw, 32px); }
+.suggestion-section-title { margin: 4px 0 18px; padding-bottom: 8px; border-bottom: 2px solid var(--black); font-size: 18px; }
+.suggestion-field + .suggestion-section-title { margin-top: 28px; }
+.suggestion-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
+.suggestion-field { display: flex; flex-direction: column; gap: 7px; min-width: 0; margin-bottom: 18px; }
+.suggestion-field label { font-size: 14px; font-weight: 700; }
+.suggestion-field small { margin-left: 5px; color: var(--sub-text); font-weight: 400; }
+.suggestion-field input, .suggestion-field select, .suggestion-field textarea {
+    width: 100%; min-width: 0; padding: 11px 12px; color: var(--black); background: var(--white);
+    border: 1px solid #888; border-radius: 0; font: inherit; font-size: 16px;
+}
+.suggestion-field textarea { min-height: 110px; resize: vertical; line-height: 1.7; }
+.suggestion-field [aria-invalid="true"] { border: 2px solid var(--red-dark); }
+.suggestion-help { color: #555; font-size: 12px; line-height: 1.7; }
+.suggestion-error { color: #a60018; font-size: 13px; line-height: 1.6; }
+.suggestion-error:empty { display: none; }
+.suggestion-error-summary { margin-bottom: 24px; padding: 14px; color: #a60018; background: var(--red-light); border-left: 4px solid var(--red-dark); line-height: 1.7; }
+.suggestion-submit { width: 100%; padding: 15px 18px; color: var(--white); background: var(--black); border: 2px solid var(--black); font: inherit; font-weight: 700; cursor: pointer; }
+.suggestion-submit:hover { background: var(--red-dark); }
+.suggestion-submit:disabled { opacity: .65; cursor: wait; }
+[data-submit-status] { margin-top: 10px; }
+.suggestion-form :focus-visible, .suggestion-context :focus-visible, .suggestion-brand:focus-visible { outline: 3px solid var(--red-dark); outline-offset: 3px; }
+.suggestion-notices { display: grid; gap: 8px; padding: 14px 18px 0; }
+.suggestion-notices:empty { display: none; }
+.suggestion-notices .notice { padding: 12px; border-left: 3px solid var(--red-dark); background: var(--white); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+.suggestion-context { margin: 16px 18px; padding: 14px; background: var(--panel-light); }
+.suggestion-context > p { margin-bottom: 12px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.suggestion-context summary { font-size: 13px; font-weight: 700; cursor: pointer; }
+.suggestion-context dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 12px; font-size: 12px; line-height: 1.7; }
+.suggestion-context dt { color: var(--sub-text); }
+.suggestion-context dd { margin: 0; overflow-wrap: anywhere; }
+.suggestion-edit { width: 100%; margin-top: 12px; padding: 9px; background: var(--white); border: 1px solid var(--black); font: inherit; font-size: 13px; cursor: pointer; }
+.profile-panel .suggestion-grid { grid-template-columns: 1fr; }
+.profile-panel .suggestion-section-title { margin-top: 22px; }
+.profile-panel .suggestion-submit { margin-top: 18px; }
+@media (min-width: 901px) and (max-width: 1024px) {
+    .record-dashboard { grid-template-columns: minmax(0, .9fr) minmax(0, 1.5fr) minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+    .suggestion-layout { grid-template-columns: 1fr; }
+    .suggestion-intro { padding: 24px; }
+    .suggestion-intro h1 { margin: 12px 0; }
+    .suggestion-intro h1 br { display: none; }
+    .suggestion-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 26px 0; }
+    .profile-panel .suggestion-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+    body .suggestion-header { padding: 14px 18px; }
+    .suggestion-header > span { max-width: 12em; font-size: 12px; }
+    .suggestion-steps, .suggestion-grid, .profile-panel .suggestion-grid { grid-template-columns: 1fr; }
+    .suggestion-steps { gap: 16px; }
+}
+</style><style>.record-view-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.record-view-tabs__button { gap: 4px; padding-inline: 4px; }
+.feedback-intro { padding: 24px; display: grid; gap: 24px; line-height: 1.85; }
+.feedback-intro > p:first-child { font-size: 19px; font-weight: 700; }
+.feedback-intro__note { padding: 18px; border-radius: 14px; background: var(--panel-light); }
+.feedback-intro__note p { margin-top: 8px; font-size: 14px; }
+.feedback-muted { color: #595959; font-size: 13px; line-height: 1.8; }
+.feedback-notice { margin-top: 18px; padding: 16px; background: var(--red-light); border: 1px solid var(--red); border-radius: 14px; }
+.feedback-notice p { font-size: 13px; margin-top: 6px; line-height: 1.7; }
+.feedback-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.feedback-button { min-height: 40px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--white); font-size: 13px; font-weight: 700; cursor: pointer; }
+.feedback-button:hover { border-color: var(--red-dark); color: var(--red-dark); }
+.feedback-button--primary { background: var(--red); border-color: var(--red); color: white; }
+.feedback-button--primary:hover { background: var(--red-dark); color: white; }
+.feedback-button:disabled { opacity: .45; cursor: default; }
+.feedback-button:focus-visible, .daily-feedback summary:focus-visible { outline: 3px solid var(--red-dark); outline-offset: 3px; }
+.feedback-content { padding: 22px; }
+.feedback-heading, .feedback-period, .feedback-preview { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.feedback-heading h2 { font-size: 23px; margin-top: 5px; }
+.feedback-label { flex-shrink: 0; font-size: 12px; color: var(--red-dark); background: var(--red-light); padding: 6px 10px; border-radius: 20px; }
+.feedback-granularity { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin: 18px 0 0; padding: 4px; min-width: 0; border: 1px solid #ddd; border-radius: 12px; background: #ededed; }
+.feedback-granularity label { position: relative; min-width: 0; cursor: pointer; }
+.feedback-granularity input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.feedback-granularity span { display: block; padding: 10px 4px; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 700; }
+.feedback-granularity input:checked + span { background: var(--white); color: var(--red-dark); box-shadow: 0 1px 4px #00000015; }
+.feedback-granularity input:focus-visible + span { outline: 3px solid var(--red-dark); outline-offset: 1px; }
+.feedback-period { margin: 20px 0 14px; }
+.feedback-period p { flex: 1; font-size: 14px; font-weight: 700; text-align: center; }
+.feedback-period .feedback-button { min-width: 40px; font-size: 20px; }
+.feedback-preview { margin-bottom: 16px; font-size: 12px; color: #595959; flex-wrap: wrap; }
+.feedback-sample-note { padding: 12px; border: 1px dashed var(--red); background: var(--red-light); border-radius: 8px; margin-bottom: 14px; font-size: 13px; line-height: 1.7; }
+.feedback-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.feedback-stat { padding: 14px; border: 1px solid #dedede; border-radius: 12px; background: white; }
+.feedback-stat span { display: block; color: #595959; font-size: 12px; }
+.feedback-stat strong { display: block; margin-top: 8px; font-size: 20px; }
+.feedback-card { padding: 18px; margin: 12px 0; border: 1px solid #dedede; border-radius: 12px; background: white; }
+.feedback-card h3 { font-size: 14px; color: var(--red-dark); margin: 0 0 10px; }
+.feedback-card p, .feedback-copy p { font-size: 14px; line-height: 1.85; white-space: pre-line; }
+.feedback-card--next { background: var(--red-light); border-color: transparent; }
+.feedback-nutrients { margin-top: 20px; }
+.feedback-nutrients h3 { font-size: 15px; margin: 0 0 10px; }
+.feedback-nutrients dl { margin: 0 0 10px; }
+.feedback-nutrients dl > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 13px; }
+.feedback-nutrients dd { margin: 0; text-align: right; }
+.feedback-nutrients dd small { display: block; color: #595959; margin-top: 4px; }
+.feedback-empty { padding: 28px 18px; text-align: center; border: 1px dashed var(--border); border-radius: 14px; }
+.feedback-empty h3 { margin: 0 0 12px; font-size: 18px; }
+.feedback-empty p { font-size: 14px; line-height: 1.9; }
+.daily-feedback { margin: 18px 24px 24px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel-light); }
+.daily-feedback summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+.daily-feedback .feedback-copy { display: grid; gap: 12px; margin-top: 14px; }
+@media (max-width: 560px) {
+    .record-view-tabs__button { flex-direction: column; white-space: normal; font-size: 11px; gap: 3px; }
+    .feedback-content { padding: 14px 10px; }
+    .feedback-heading h2 { font-size: 20px; }
+    .feedback-stat { padding: 12px; }
+    .feedback-stat strong { font-size: 18px; }
+    .daily-feedback { margin-inline: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .record-view-track { transition: none; }
+}
+</style><style>.record-header__navigation{grid-template-columns:repeat(2,minmax(0,1fr))}.record-dashboard{grid-template-columns:minmax(255px,.9fr) minmax(430px,1.5fr)}.record-dashboard--entry,.record-dashboard--profile{display:block;overflow:auto}.profile-panel{height:100%}@media(max-width:1100px){.record-dashboard{grid-template-columns:1fr;overflow:auto}.record-panel--left,.record-panel--center{min-height:640px}}</style><meta name="description" content="トレ食：食事・運動・体重を記録するアプリ。"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"></head>
+
+<body>
+
+<div class="record-page">
+
+    <!-- ========================================
+         ヘッダー
+    ========================================= -->
+    <header class="record-header">
+
+        <nav class="record-header__navigation" aria-label="メインメニュー">
+
+            <button type="button" class="record-header__button" id="record-navigation" aria-controls="record-entry" aria-expanded="false">
+                記録する
+            </button>
+
+            <button type="button" class="record-header__button" id="profile-navigation" aria-controls="profile-panel" aria-expanded="false">
+                プロフィール
+            </button>
+
+        </nav>
+
+    </header>
+
+
+    <main class="record-dashboard">
+        <section class="record-entry" id="record-entry" aria-labelledby="record-entry-title" data-endpoint="/api/calorie-estimate" hidden>
+            <form id="record-entry-form">
+                <h1 id="record-entry-title" tabindex="-1">今日の記録</h1>
+                <section class="record-entry__section" aria-labelledby="entry-meal-title">
+                    <h2 id="entry-meal-title">食事の記録</h2>
+                    <p class="record-entry__hint">栄養素は任意入力です。食べた量に含まれるグラム数を入力してください。塩分は食塩相当量を入力します。</p>
+                    <div id="entry-meal-list" class="record-entry__list"></div>
+                    <p id="entry-meal-empty" class="record-entry__empty">「追加」から食べたものと量を入力してください。</p>
+                    <div class="record-entry__section-footer">
+                        <p>総カロリー：<output id="entry-meal-total">+0 kcal</output></p>
+                        <div class="record-entry__actions">
+                            <button type="button" class="record-entry__action record-entry__estimate" id="entry-estimate-meal" aria-describedby="entry-estimate-hint" hidden="hidden" disabled>AIでカロリーを調べる<span class="visually-hidden">（食事）</span></button>
+                            <button type="button" class="record-entry__action" id="entry-add-meal">追加<span class="visually-hidden">（食事）</span></button>
+                        </div>
+                        <div id="entry-nutrient-totals" class="record-entry__nutrient-totals" hidden>
+                            <p>栄養素の合計（入力済み分）</p>
+                            <dl></dl>
+                        </div>
+                        <p id="entry-estimate-meal-status" class="record-entry__status record-entry__estimate-status" role="status" hidden="hidden"></p>
+                    </div>
+                </section>
+                <section class="record-entry__section" aria-labelledby="entry-workout-title">
+                    <h2 id="entry-workout-title">運動の記録</h2>
+                    <div id="entry-workout-list" class="record-entry__list"></div>
+                    <p id="entry-workout-empty" class="record-entry__empty">「追加」から運動の内容と時間・回数を入力してください。</p>
+                    <div class="record-entry__section-footer">
+                        <p>総カロリー：<output id="entry-workout-total">−0 kcal</output></p>
+                        <div class="record-entry__actions">
+                            <button type="button" class="record-entry__action record-entry__estimate" id="entry-estimate-workout" aria-describedby="entry-estimate-hint" hidden="hidden" disabled>AIでカロリーを調べる<span class="visually-hidden">（運動）</span></button>
+                            <button type="button" class="record-entry__action" id="entry-add-workout">追加<span class="visually-hidden">（運動）</span></button>
+                        </div>
+                        <p id="entry-estimate-workout-status" class="record-entry__status record-entry__estimate-status" role="status" hidden="hidden"></p>
+                    </div>
+                </section>
+                <section class="record-entry__balance visually-hidden" aria-labelledby="entry-balance-title">
+                    <h2 id="entry-balance-title">一日の総カロリー</h2>
+                    <output id="entry-balance" aria-live="polite">0 kcal − 0 kcal = 0 kcal</output>
+                    <p class="record-entry__hint">食事の摂取カロリー − 記録した運動の消費カロリー</p>
+                </section>
+                <div class="record-entry__footer">
+                    <div class="record-entry__weight">
+                        <label for="entry-weight-whole">体重：</label>
+                        <input id="entry-weight-whole" type="number" min="1" max="499" step="1" inputmode="numeric" aria-label="体重の整数部分">
+                        <span aria-hidden="true">.</span>
+                        <select id="entry-weight-decimal" aria-label="体重の小数部分">
+                            <option value="0">0</option><option value="1">1</option>
+                            <option value="2">2</option><option value="3">3</option>
+                            <option value="4">4</option><option value="5">5</option>
+                            <option value="6">6</option><option value="7">7</option>
+                            <option value="8">8</option><option value="9">9</option>
+                        </select>
+                        <span>kg</span>
+                    </div>
+                    <button type="submit" id="entry-save" class="record-entry__action">記録</button>
+                </div>
+                <p class="record-entry__hint" id="entry-estimate-hint" hidden="hidden">AIはカロリーが未入力の項目を推定します。食事の量・運動の時間や回数を入力してください。推定値は目安で、後から変更できます。</p>
+                <p class="record-entry__hint">記録はこのブラウザーに保存されます。</p>
+                <p id="record-entry-status" class="record-entry__status" role="status"></p>
+            </form>
+        </section>
+
+        <!-- ========================================
+             左側
+        ========================================= -->
+        <aside class="record-panel record-panel--left">
+
+            <!-- カレンダー用 -->
+            <div class="left-content left-content--active" data-left-view="calendar">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <p class="eyebrow">DAILY RECORD</p>
+
+                        <h1 id="selected-date-title">
+                            今日の記録
+                        </h1>
+                    </div>
+
+                    <span class="badge badge--red">
+                        RECORD
+                    </span>
+
+                </div>
+
+
+                <section class="record-section">
+
+                    <div class="section-heading">
+
+                        <h2>食事の記録</h2>
+
+                        <span class="badge badge--meal">
+                            MEAL
+                        </span>
+
+                    </div>
+
+                    <div id="meal-record-list" class="record-list"></div>
+
+                    <div class="summary-row">
+
+                        <span>総摂取カロリー</span>
+
+                        <strong id="total-intake-calories">
+                            0 kcal
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <section class="record-section">
+
+                    <div class="section-heading">
+
+                        <h2>運動の記録</h2>
+
+                        <span class="badge badge--black">
+                            WORKOUT
+                        </span>
+
+                    </div>
+
+                    <div id="workout-record-list" class="record-list"></div>
+
+                    <div class="summary-row">
+
+                        <span>運動による消費</span>
+
+                        <strong id="total-workout-calories">
+                            0 kcal
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <section class="balance-card">
+
+                    <div>
+                        <span>一日の差し引き</span>
+
+                        <small>
+                            摂取 − 記録した運動の消費
+                        </small>
+                    </div>
+
+                    <strong id="daily-calorie-balance">
+                        0 kcal
+                    </strong>
+
+                </section>
+
+                <details class="daily-feedback" id="daily-feedback">
+                    <summary>この日の振り返りを見る</summary>
+                    <div id="daily-feedback-content" class="feedback-copy"></div>
+                </details>
+
+            </div>
+
+
+            <!-- 体重用 -->
+            <div class="left-content" data-left-view="weight">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <p class="eyebrow">WEIGHT SUMMARY</p>
+                        <h1>体重の推移</h1>
+                    </div>
+
+                    <span class="badge badge--weight">
+                        WEIGHT
+                    </span>
+
+                </div>
+
+
+                <section class="metric-grid">
+
+                    <article class="metric-card">
+                        <span>現在の体重</span>
+
+                        <strong id="current-weight">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>前回の記録との差</span>
+
+                        <strong id="previous-weight-difference">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>直近7件の平均</span>
+
+                        <strong id="weekly-weight-average">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>最新記録の月平均</span>
+
+                        <strong id="monthly-weight-average">
+                            -- kg
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card metric-card--wide">
+                        <span>記録開始からの変化</span>
+
+                        <strong id="total-weight-change">
+                            -- kg
+                        </strong>
+                    </article>
+
+                </section>
+
+
+                <section class="history-section">
+
+                    <div class="section-heading">
+                        <h2>体重履歴</h2>
+                    </div>
+
+                    <div class="table-scroll">
+
+                        <table class="history-table">
+
+                            <thead>
+                            <tr>
+                                <th>日付</th>
+                                <th>体重</th>
+                                <th>前回比</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="weight-history-body"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- カロリー用 -->
+            <div class="left-content" data-left-view="calories">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <p class="eyebrow">CALORIE SUMMARY</p>
+                        <h1>カロリーの推移</h1>
+                    </div>
+
+                    <span class="badge badge--calorie">
+                        CALORIE
+                    </span>
+
+                </div>
+
+
+                <p id="selected-calorie-date" class="selected-data-date">
+                    今日のカロリー
+                </p>
+
+
+                <section class="metric-grid">
+
+                    <article class="metric-card">
+                        <span>摂取カロリー</span>
+
+                        <strong id="selected-intake-calories" class="meal-text">
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>運動による消費</span>
+
+                        <strong id="selected-burned-calories" class="workout-text">
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>直近7件の平均摂取</span>
+
+                        <strong id="average-intake-calories">
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card">
+                        <span>直近7件の平均運動消費</span>
+
+                        <strong id="average-burned-calories">
+                            -- kcal
+                        </strong>
+                    </article>
+
+
+                    <article class="metric-card metric-card--wide">
+                        <span>直近7件の差し引き合計</span>
+
+                        <strong id="weekly-calorie-balance">
+                            -- kcal
+                        </strong>
+                    </article>
+
+                </section>
+
+
+                <section class="history-section">
+
+                    <div class="section-heading">
+                        <h2>カロリー履歴</h2>
+                    </div>
+
+                    <div class="table-scroll">
+
+                        <table class="history-table history-table--calorie">
+
+                            <thead>
+                            <tr>
+                                <th>日付</th>
+                                <th>摂取</th>
+                                <th>消費</th>
+                                <th>差</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="calorie-history-body"></tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+            <div class="left-content" data-left-view="feedback">
+                <div class="panel-heading">
+                    <div><p class="eyebrow">RECORD REVIEW</p><h1>記録を振り返る</h1></div>
+                    <span class="badge badge--red">REVIEW</span>
+                </div>
+                <div class="feedback-intro">
+                    <p>食事と運動の積み重ねを、<br>少し立ち止まって見てみよう。</p>
+                    <p class="feedback-muted">週・月・年・すべての期間で記録を振り返れます。週は月曜〜日曜、月と年は暦に合わせて集計します。</p>
+                    <div class="feedback-intro__note">
+                        <strong>次の一歩は、ひとつで十分。</strong>
+                        <p>できたこと、記録の傾向、次に試すことを短くまとめます。</p>
+                    </div>
+                    <p class="feedback-muted">未入力の食事や栄養素は、不足やゼロとして評価しません。</p>
+                </div>
+            </div>
+        </aside>
+
+
+        <!-- ========================================
+             中央
+        ========================================= -->
+        <section class="record-panel record-panel--center">
+
+            <!-- 表示切り替え -->
+            <div class="record-view-tabs" role="tablist" aria-label="表示内容を選択">
+
+                <button type="button" class="record-view-tabs__button record-view-tabs__button--active" data-view="calendar" aria-selected="true">
+                    <span class="record-view-tabs__icon">▦</span>
+                    <span>カレンダー</span>
+                </button>
+
+
+                <button type="button" class="record-view-tabs__button" data-view="weight" aria-selected="false">
+                    <span class="record-view-tabs__icon">▥</span>
+                    <span>体重の推移</span>
+                </button>
+
+
+                <button type="button" class="record-view-tabs__button" data-view="calories" aria-selected="false">
+                    <span class="record-view-tabs__icon">◔</span>
+                    <span>カロリー</span>
+                </button>
+
+                <button type="button" class="record-view-tabs__button" data-view="feedback" aria-selected="false">
+                    <span class="record-view-tabs__icon" aria-hidden="true">✧</span>
+                    <span>振り返り</span>
+                </button>
+
+            </div>
+
+
+            <div id="view-viewport" class="record-view-viewport" tabindex="0">
+
+                <div id="view-track" class="record-view-track">
+
+                    <!-- カレンダー -->
+                    <section class="center-content calendar-content" data-center-view="calendar" aria-hidden="false">
+
+                        <div class="calendar-toolbar">
+
+                            <button id="previous-month" type="button" class="calendar-arrow" aria-label="前の月">
+                                ‹
+                            </button>
+
+
+                            <div class="calendar-title">
+
+                                <p class="eyebrow">
+                                    RECORD CALENDAR
+                                </p>
+
+                                <h2 id="calendar-title">
+                                    カレンダー
+                                </h2>
+
+                            </div>
+
+
+                            <button id="next-month" type="button" class="calendar-arrow" aria-label="次の月">
+                                ›
+                            </button>
+
+                        </div>
+
+
+                        <div class="calendar-weekdays">
+
+                            <span class="weekday-sunday">日</span>
+                            <span>月</span>
+                            <span>火</span>
+                            <span>水</span>
+                            <span>木</span>
+                            <span>金</span>
+                            <span class="weekday-saturday">土</span>
+
+                        </div>
+
+
+                        <div id="calendar-grid" class="calendar-grid"></div>
+
+
+                        <div class="calendar-legend">
+
+                            <span>
+                                <i class="legend-dot legend-dot--selected"></i>
+                                選択中
+                            </span>
+
+                            <span>
+                                <i class="legend-dot legend-dot--record"></i>
+                                記録あり
+                            </span>
+
+                            <span>
+                                <i class="legend-dot legend-dot--today"></i>
+                                今日
+                            </span>
+
+                        </div>
+
+                        <aside class="feedback-notice" id="feedback-notice" aria-label="先週の振り返り" hidden>
+                            <div><strong>先週の記録を振り返りませんか</strong><p id="feedback-notice-summary"></p></div>
+                            <div class="feedback-actions">
+                                <button type="button" class="feedback-button feedback-button--primary" id="feedback-notice-open">振り返りを見る</button>
+                                <button type="button" class="feedback-button" id="feedback-notice-dismiss">閉じる</button>
+                            </div>
+                        </aside>
+
+                    </section>
+
+
+                    <!-- 体重グラフ -->
+                    <section class="center-content graph-content" data-center-view="weight" aria-hidden="true">
+
+                        <div class="graph-heading">
+
+                            <div>
+                                <p class="eyebrow">WEIGHT HISTORY</p>
+                                <h2>体重の推移</h2>
+                                <p id="weight-period"></p>
+                            </div>
+
+                            <span class="badge badge--weight">
+                                kg
+                            </span>
+
+                        </div>
+
+
+                        <div class="weight-chart">
+
+                            <div class="weight-chart__grid"></div>
+
+                            <div id="weight-bars" class="weight-bars"></div>
+
+                        </div>
+
+
+                        <div id="weight-point-detail" class="graph-message">
+                            棒グラフを押すと体重を確認できます
+                        </div>
+
+                    </section>
+
+
+                    <!-- カロリー円グラフ -->
+                    <section class="center-content graph-content" data-center-view="calories" aria-hidden="true">
+
+                        <div class="graph-heading">
+
+                            <div>
+                                <p class="eyebrow">CALORIE BALANCE</p>
+                                <h2>摂取と消費のバランス</h2>
+                                <p id="calorie-chart-date"></p>
+                            </div>
+
+                            <span class="badge badge--calorie">
+                                kcal
+                            </span>
+
+                        </div>
+
+
+                        <div class="calorie-chart">
+
+                            <div class="donut-container">
+
+                                <div id="calorie-donut" class="calorie-donut">
+
+                                    <div class="calorie-donut__center">
+
+                                        <span>差し引き</span>
+
+                                        <strong id="donut-balance">
+                                            -- kcal
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="calorie-chart__legend">
+
+                                <article class="calorie-legend-card">
+
+                                    <span class="calorie-mark calorie-mark--intake"></span>
+
+                                    <div>
+                                        <small>摂取カロリー</small>
+
+                                        <strong id="donut-intake">
+                                            -- kcal
+                                        </strong>
+
+                                        <p id="donut-intake-percentage">
+                                            --%
+                                        </p>
+                                    </div>
+
+                                </article>
+
+
+                                <article class="calorie-legend-card">
+
+                                    <span class="calorie-mark calorie-mark--burned"></span>
+
+                                    <div>
+                                        <small>記録した運動の消費</small>
+
+                                        <strong id="donut-burned">
+                                            -- kcal
+                                        </strong>
+
+                                        <p id="donut-burned-percentage">
+                                            --%
+                                        </p>
+                                    </div>
+
+                                </article>
+
+                            </div>
+
+                        </div>
+
+
+                        <div id="calorie-message" class="graph-message">
+                            摂取と消費を比較します
+                        </div>
+
+                    </section>
+
+                    <section class="center-content feedback-content" data-center-view="feedback" aria-hidden="true" inert>
+                        <div class="feedback-heading">
+                            <div><p class="eyebrow">YOUR RECORDS</p><h2 id="feedback-title" tabindex="-1">一週間の振り返り</h2></div>
+                            <span class="feedback-label" id="feedback-period-label">先週</span>
+                        </div>
+                        <fieldset class="feedback-granularity" id="feedback-granularity">
+                            <legend class="visually-hidden">振り返りの集計単位</legend>
+                            <label><input type="radio" name="feedback-period-kind" value="week" checked><span>週</span></label>
+                            <label><input type="radio" name="feedback-period-kind" value="month"><span>月</span></label>
+                            <label><input type="radio" name="feedback-period-kind" value="year"><span>年</span></label>
+                            <label><input type="radio" name="feedback-period-kind" value="all"><span>すべて</span></label>
+                        </fieldset>
+                        <div class="feedback-period">
+                            <button type="button" class="feedback-button" id="feedback-previous" aria-label="前の週">‹</button>
+                            <p id="feedback-period" aria-live="polite"></p>
+                            <button type="button" class="feedback-button" id="feedback-next" aria-label="次の週">›</button>
+                        </div>
+                        <div class="feedback-preview">
+                            <p id="feedback-source">記録から作成した振り返り</p>
+                            </div>
+                        <div id="feedback-report" aria-live="polite"></div>
+                    </section>
+                </div>
+
+            </div>
+
+
+            <div class="record-swipe-guide">
+
+                <span id="previous-view-label"></span>
+
+                <span class="record-swipe-guide__main">
+                    ← 横にスワイプして切り替え →
+                </span>
+
+                <span id="next-view-label">
+                    体重の推移 →
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ========================================
+             右側
+        ========================================= -->
+        <aside class="record-panel profile-panel" id="profile-panel" aria-labelledby="profile-title" hidden>
+            <form id="profile-form">
+                <section class="profile-section">
+                    <h1 id="profile-title" tabindex="-1">プロフィール・提案条件</h1>
+                    <div class="suggestion-fields">
+    <h2 class="suggestion-section-title">あなたのこと</h2>
+    <div class="suggestion-grid">
+        <div class="suggestion-field">
+            <label for="heightCm">身長 <small>cm</small></label>
+            <input type="number" min="100" max="250" step="1" inputmode="numeric" required aria-describedby="height-error" id="heightCm" name="heightCm" value="172">
+            <p class="suggestion-error" id="height-error"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="weightKg">体重 <small>kg</small></label>
+            <input type="number" min="30" max="200" step="1" inputmode="numeric" required aria-describedby="weight-error" id="weightKg" name="weightKg" value="68">
+            <p class="suggestion-error" id="weight-error"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="age">年齢 <small>歳</small></label>
+            <input type="number" min="15" max="90" step="1" inputmode="numeric" required aria-describedby="age-error" id="age" name="age" value="19">
+            <p class="suggestion-error" id="age-error"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="gender">性別</label>
+            <select required aria-describedby="gender-error" id="gender" name="gender">
+                <option value="男性" selected>男性</option><option value="女性">女性</option><option value="回答しない">回答しない</option></select>
+            <p class="suggestion-error" id="gender-error"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="goal">目標</label>
+            <select required aria-describedby="goal-error" id="goal" name="goal">
+                <option value="体を絞りたい" selected>体を絞りたい</option><option value="筋肉をつけたい">筋肉をつけたい</option><option value="体重を増やしたい">体重を増やしたい</option><option value="健康を維持したい">健康を維持したい</option></select>
+            <p class="suggestion-error" id="goal-error"></p>
+        </div>
+        <div class="suggestion-field">
+            <label for="environment">運動環境</label>
+            <select required aria-describedby="environment-error" id="environment" name="environment">
+                <option value="自宅（自重トレのみ）" selected>自宅（自重トレのみ）</option><option value="自宅（ダンベルあり）">自宅（ダンベルあり）</option><option value="ジムに通える">ジムに通える</option><option value="外を走れる">外を走れる</option></select>
+            <p class="suggestion-error" id="environment-error"></p>
+        </div>
+    </div>
+    <div class="suggestion-field">
+        <label for="allergy">アレルギー・苦手な食べ物 <small>任意</small></label>
+        <input type="text" maxlength="200" placeholder="例：卵アレルギー、牛乳が苦手" aria-describedby="allergy-error" id="allergy" name="allergy" value="">
+        <p class="suggestion-error" id="allergy-error"></p>
+    </div>
+</div>
+<div class="profile-field">
+                        <label for="profile-target-weight">目標体重：</label>
+                        <input id="profile-target-weight" name="targetWeightKg" type="number" min="1" max="499.9" step="0.1" inputmode="decimal" placeholder="未設定">
+                        <span>kg</span>
+                    </div>
+                </section>
+                <section class="profile-section" aria-labelledby="profile-theme-title">
+                    <h2 id="profile-theme-title">テーマカラーの変更</h2>
+                    <div id="profile-palette" class="profile-palette" role="radiogroup" aria-label="背景のテーマカラー"></div>
+                    <div class="profile-color-field">
+                        <label for="profile-color">好きな色を選ぶ</label>
+                        <input id="profile-color" type="color" value="#ef233c">
+                        <output id="profile-color-value" for="profile-color">#EF233C</output>
+                    </div>
+                    <button type="button" id="profile-theme-reset" class="profile-reset">標準の色に戻す</button>
+                </section>
+                <p class="profile-hint">テーマカラーは選ぶと背景に反映されます。目標体重とテーマカラーはこのブラウザーに保存されます。</p>
+                <p id="profile-status" class="profile-status" role="status"></p>
+            </form>
+        </aside>
+    </main>
+
+</div>
+
+<script>document.addEventListener('DOMContentLoaded', () => {
+ const dashboard=document.querySelector('.record-dashboard');
+ const page=document.querySelector('.record-page');
+ const entry=document.getElementById('record-entry');
+ const profile=document.getElementById('profile-panel');
+ const recordButton=document.getElementById('record-navigation');
+ const profileButton=document.getElementById('profile-navigation');
+ const records=dashboard.querySelectorAll('.record-panel--left,.record-panel--center');
+ function show(mode) {
+  const editing=mode==='record', profiling=mode==='profile';
+  records.forEach(panel=>panel.hidden=editing || profiling);
+  entry.hidden=!editing; profile.hidden=!profiling;
+  recordButton.textContent=editing?'topに戻る':'記録する';
+  profileButton.textContent=profiling?'topに戻る':'プロフィール';
+  recordButton.setAttribute('aria-expanded',String(editing));
+  profileButton.setAttribute('aria-expanded',String(profiling));
+  dashboard.classList.toggle('record-dashboard--entry',editing);
+  dashboard.classList.toggle('record-dashboard--profile',profiling);
+  page.classList.toggle('record-page--entry',editing);
+  page.classList.toggle('record-page--profile',profiling);
+  document.title=editing?'記録する｜トレ食':profiling?'プロフィール｜トレ食':'記録一覧｜トレ食';
+  if(editing)document.dispatchEvent(new CustomEvent('record-entry-open'));
+  if(profiling)document.getElementById('profile-title').focus();
+ }
+ recordButton.addEventListener('click',()=>show(entry.hidden?'record':null));
+ profileButton.addEventListener('click',()=>show(profile.hidden?'profile':null));
+ document.querySelectorAll('[data-open-profile]').forEach(button=>button.addEventListener('click',()=>show('profile')));
+});</script><script>window.mealChatProfile = {"heightCm": 172, "weightKg": 68, "age": 19, "gender": "男性", "goal": "体を絞りたい", "environment": "自宅（自重トレのみ）", "allergy": ""};
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-suggestion-form]").forEach(form => {
+        const button = form.querySelector('button[type="submit"]');
+        const label = button.querySelector("[data-submit-label]");
+        const loading = button.querySelector("[data-submit-loading]");
+        const status = form.querySelector("[data-submit-status]");
+        let submitting = false;
+
+        function reset() {
+            submitting = false;
+            button.disabled = false;
+            label.hidden = false;
+            loading.hidden = true;
+            form.removeAttribute("aria-busy");
+            status.textContent = "提案の作成には少し時間がかかります。";
+        }
+        form.addEventListener("submit", event => {
+            if (submitting || !form.reportValidity()) {
+                event.preventDefault();
+                return;
+            }
+            submitting = true;
+            button.disabled = true;
+            label.hidden = true;
+            loading.hidden = false;
+            form.setAttribute("aria-busy", "true");
+            status.textContent = "食事と運動の提案を作成しています。そのままお待ちください。";
+        });
+        // ブラウザーの「戻る」で復元された場合も、条件を変えて再送信できる。
+        window.addEventListener("pageshow", reset);
+    });
+});
+
+;
+document.addEventListener("DOMContentLoaded", () => {
+    const storageKey = "toresyoku.profile-settings";
+    const defaultColor = "#ef233c";
+    const page = document.querySelector(".record-page");
+    const form = document.getElementById("profile-form");
+    const height = document.getElementById("heightCm");
+    const targetWeight = document.getElementById("profile-target-weight");
+    const color = document.getElementById("profile-color");
+    const palette = document.getElementById("profile-palette");
+    const status = document.getElementById("profile-status");
+    const validColor = value => typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
+    let settings = { themeColor: defaultColor };
+    try {
+        const saved = JSON.parse(localStorage.getItem(storageKey));
+        if (saved && typeof saved === "object") {
+            if (Number.isFinite(saved.targetWeightKg) && saved.targetWeightKg >= 1 && saved.targetWeightKg <= 499.9) settings.targetWeightKg = saved.targetWeightKg;
+            if (validColor(saved.themeColor)) settings.themeColor = saved.themeColor.toLowerCase();
+        }
+    } catch { status.textContent = "保存済みの設定を読み込めませんでした。変更はこの画面で利用できます。"; }
+    targetWeight.value = settings.targetWeightKg ?? "";
+
+    function publishProfile() {
+        window.recordProfile = {
+            heightCm: window.mealChatProfile?.heightCm ?? null,
+            targetWeightKg: settings.targetWeightKg ?? null
+        };
+        document.dispatchEvent(new CustomEvent("profile-updated", { detail: window.recordProfile }));
+    }
+    publishProfile();
+
+    function persist(message) {
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(settings));
+            status.textContent = message;
+        } catch {
+            status.textContent = "変更を反映しましたが、保存できませんでした。ブラウザーの保存設定や空き容量をご確認ください。";
+        }
+    }
+    function applyColor(value) {
+        if (!validColor(value)) return;
+        color.value = value;
+        page.style.setProperty("--frame-color", value);
+        document.getElementById("profile-color-value").textContent = value.toUpperCase();
+        const swatches = [...palette.children];
+        const selected = swatches.find(button => button.dataset.color === value.toLowerCase());
+        swatches.forEach((button, index) => {
+            button.setAttribute("aria-checked", String(button === selected));
+            button.tabIndex = button === selected || (!selected && index === 0) ? 0 : -1;
+        });
+    }
+    function chooseColor(value) {
+        settings.themeColor = value.toLowerCase();
+        applyColor(settings.themeColor);
+        persist("テーマカラーを保存しました。");
+    }
+    function hslToHex(hue, lightness) {
+        const a = Math.min(lightness, 1 - lightness);
+        const channel = n => {
+            const k = (n + hue / 30) % 12;
+            return Math.round(255 * (lightness - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)))).toString(16).padStart(2, "0");
+        };
+        return "#" + channel(0) + channel(8) + channel(4);
+    }
+    const colors = [];
+    for (const lightness of [.94, .84, .72, .6, .5, .38, .26]) {
+        for (let hue = 0; hue < 360; hue += 30) colors.push(hslToHex(hue, lightness));
+    }
+    for (let index = 0; index < 12; index++) {
+        const gray = Math.round(255 * (1 - index / 11)).toString(16).padStart(2, "0");
+        colors.push("#" + gray.repeat(3));
+    }
+    colors.forEach(value => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "profile-swatch";
+        button.dataset.color = value;
+        button.style.setProperty("--swatch", value);
+        button.setAttribute("role", "radio");
+        button.setAttribute("aria-label", "テーマカラー " + value.toUpperCase());
+        button.title = value.toUpperCase();
+        button.addEventListener("click", () => chooseColor(value));
+        palette.append(button);
+    });
+    palette.addEventListener("keydown", event => {
+        const buttons = [...palette.children];
+        const index = buttons.indexOf(event.target);
+        if (index < 0) return;
+        const offset = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 12, ArrowUp: -12 }[event.key];
+        if (offset === undefined && event.key !== "Home" && event.key !== "End") return;
+        event.preventDefault();
+        const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? buttons.length - 1 : (index + offset + buttons.length) % buttons.length;
+        buttons[nextIndex].focus();
+        chooseColor(buttons[nextIndex].dataset.color);
+    });
+    color.addEventListener("input", () => applyColor(color.value));
+    color.addEventListener("change", () => chooseColor(color.value));
+    document.getElementById("profile-theme-reset").addEventListener("click", () => chooseColor(defaultColor));
+    function updateTargetWeight() {
+        if (!targetWeight.validity.valid) return;
+        const value = targetWeight.value === "" ? null : targetWeight.valueAsNumber;
+        if (settings.targetWeightKg === value) return;
+        settings.targetWeightKg = value;
+        persist("目標体重を保存しました。");
+        publishProfile();
+    }
+    targetWeight.addEventListener("input", updateTargetWeight);
+    function updateProfile() {
+        if (!form.reportValidity()) return;
+        settings.targetWeightKg = targetWeight.value === "" ? null : Number(targetWeight.value);
+        const values = new FormData(form);
+        window.mealChatProfile = {
+            heightCm: Number(height.value),
+            weightKg: Number(values.get("weightKg")),
+            age: Number(values.get("age")),
+            gender: values.get("gender"),
+            goal: values.get("goal"),
+            environment: values.get("environment"),
+            allergy: values.get("allergy")
+        };
+        persist("相談に使う条件を更新し、目標体重を保存しました。");
+        publishProfile();
+    }
+    form.addEventListener("change", event => {
+        if (event.target === targetWeight) updateTargetWeight();
+        else if (event.target.name) updateProfile();
+    });
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+        updateProfile();
+    });
+    applyColor(settings.themeColor);
+});
+
+;
+// 日付ごとの記録をこのブラウザーに保存する。
+(() => {
+    const prefix = "toresyoku.daily-record.";
+    const mealCategories = [
+        { value: "breakfast", label: "朝食" },
+        { value: "lunch", label: "昼食" },
+        { value: "snack", label: "間食" },
+        { value: "dinner", label: "夕食" }
+    ];
+    const nutrientFields = [
+        { key: "proteinG", label: "タンパク質" },
+        { key: "fatG", label: "脂質" },
+        { key: "carbohydratesG", label: "炭水化物" },
+        { key: "fiberG", label: "食物繊維" },
+        { key: "saltG", label: "塩分" }
+    ];
+    function valid(record) {
+        const validItems = items => Array.isArray(items) && items.every(item =>
+            item && typeof item.name === "string" && Number.isFinite(item.calories) && item.calories >= 0);
+        const validNutrients = item => nutrientFields.every(({ key }) => item[key] == null ||
+            (Number.isFinite(item[key]) && item[key] >= 0 && item[key] <= 100000));
+        const validCategory = item => item.category == null ||
+            mealCategories.some(category => category.value === item.category);
+        return record && /^\d{4}-\d{2}-\d{2}$/.test(record.date) && validItems(record.meals) &&
+            record.meals.every(item => validNutrients(item) && validCategory(item)) &&
+            validItems(record.workouts) && (record.weight === null ||
+                (Number.isFinite(record.weight) && record.weight >= 1 && record.weight < 500));
+    }
+    window.recordStore = {
+        mealCategories,
+        nutrientFields,
+        read(date) {
+            const raw = localStorage.getItem(prefix + date);
+            if (!raw) return null;
+            const record = JSON.parse(raw);
+            if (!valid(record) || record.date !== date) throw new Error("Invalid record");
+            return record;
+        },
+        all() {
+            const records = [];
+            for (let index = 0; index < localStorage.length; index++) {
+                const key = localStorage.key(index);
+                if (!key?.startsWith(prefix)) continue;
+                try {
+                    const record = this.read(key.slice(prefix.length));
+                    if (record) records.push(record);
+                } catch { /* 他の日付の正常な記録は読み込む。 */ }
+            }
+            return records;
+        },
+        save(record) {
+            if (!valid(record)) throw new Error("Invalid record");
+            localStorage.setItem(prefix + record.date, JSON.stringify(record));
+        }
+    };
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+    const panel = document.getElementById("record-entry");
+    const form = document.getElementById("record-entry-form");
+    const title = document.getElementById("record-entry-title");
+    const status = document.getElementById("record-entry-status");
+    const whole = document.getElementById("entry-weight-whole");
+    const decimal = document.getElementById("entry-weight-decimal");
+    const lists = {
+        meals: document.getElementById("entry-meal-list"),
+        workouts: document.getElementById("entry-workout-list")
+    };
+    const nutrientFields = window.recordStore.nutrientFields;
+    const nutrientTotals = document.getElementById("entry-nutrient-totals");
+    const nutrientOutputs = new Map();
+    for (const { key, label } of nutrientFields) {
+        const item = document.createElement("div");
+        const term = document.createElement("dt");
+        term.textContent = label;
+        const value = document.createElement("dd");
+        const output = document.createElement("output");
+        output.id = "entry-total-" + key;
+        output.textContent = "未入力";
+        nutrientOutputs.set(key, output);
+        value.append(output);
+        item.append(term, value);
+        nutrientTotals.querySelector("dl").append(item);
+    }
+    let activeDate;
+    const rows = kind => [...lists[kind].children];
+    const total = kind => rows(kind).reduce((sum, row) => sum + (Number(row.querySelector('[data-calories]').value) || 0), 0);
+    function updateTotals() {
+        const intake = total("meals");
+        const burned = total("workouts");
+        document.getElementById("entry-meal-total").textContent = `+${intake.toLocaleString()} kcal`;
+        document.getElementById("entry-workout-total").textContent = `−${burned.toLocaleString()} kcal`;
+        document.getElementById("entry-balance").textContent = `${intake} kcal − ${burned} kcal = ${intake - burned} kcal`;
+        document.getElementById("entry-meal-empty").hidden = rows("meals").length > 0;
+        document.getElementById("entry-workout-empty").hidden = rows("workouts").length > 0;
+        nutrientTotals.hidden = rows("meals").length === 0;
+        for (const { key } of nutrientFields) {
+            const inputs = rows("meals").map(row => row.querySelector(`[data-nutrient="${key}"]`))
+                .filter(input => input.value !== "" && input.validity.valid);
+            const sum = inputs.reduce((value, input) => value + input.valueAsNumber, 0);
+            nutrientOutputs.get(key).textContent = inputs.length
+                ? `${sum.toLocaleString("ja-JP", { maximumFractionDigits: 2 })} g` : "未入力";
+        }
+    }
+    function addRow(kind, item = null, focus = true) {
+        const label = kind === "meals" ? "食事" : "運動";
+        const row = document.createElement("div");
+        row.className = "record-entry__row";
+        const bullet = document.createElement("span");
+        bullet.textContent = "・";
+        bullet.setAttribute("aria-hidden", "true");
+        const name = document.createElement("input");
+        name.dataset.name = "";
+        name.required = true;
+        name.maxLength = 120;
+        name.placeholder = kind === "meals" ? "食べたもの・量" : "運動・時間・回数";
+        name.setAttribute("aria-label", label + "の内容");
+        name.value = item?.name ?? "";
+        const calories = document.createElement("input");
+        calories.dataset.calories = "";
+        calories.type = "number";
+        calories.min = "0";
+        calories.max = "100000";
+        calories.step = "1";
+        calories.required = true;
+        calories.placeholder = "0";
+        calories.setAttribute("aria-label", label + "のカロリー（kcal）");
+        calories.value = item?.calories ?? "";
+        const unit = document.createElement("span");
+        unit.textContent = "kcal";
+        const remove = document.createElement("button");
+        remove.type = "button";
+        remove.className = "record-entry__remove";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", label + "の行を削除");
+        remove.addEventListener("click", () => {
+            row.remove();
+            updateTotals();
+            status.textContent = "";
+            document.getElementById(kind === "meals" ? "entry-add-meal" : "entry-add-workout").focus();
+        });
+        row.append(bullet, name);
+        if (kind === "meals") {
+            row.classList.add("record-entry__row--meal");
+            const category = document.createElement("select");
+            category.dataset.category = "";
+            category.required = true;
+            category.setAttribute("aria-label", "食事のカテゴリー");
+            for (const { value, label } of window.recordStore.mealCategories) {
+                category.append(new Option(label, value));
+            }
+            category.value = item?.category ?? "breakfast";
+            row.append(category);
+        }
+        row.append(calories, unit, remove);
+        if (kind === "meals") {
+            const nutrients = document.createElement("div");
+            nutrients.className = "record-entry__nutrients";
+            for (const { key, label } of nutrientFields) {
+                const field = document.createElement("label");
+                field.textContent = label + "（g）";
+                const input = document.createElement("input");
+                input.dataset.nutrient = key;
+                input.type = "number";
+                input.min = "0";
+                input.max = "100000";
+                input.step = "0.01";
+                input.inputMode = "decimal";
+                input.placeholder = "未入力";
+                input.value = item?.[key] ?? "";
+                field.append(input);
+                nutrients.append(field);
+            }
+            row.append(nutrients);
+        }
+        lists[kind].append(row);
+        updateTotals();
+        if (focus) { status.textContent = ""; name.focus(); }
+    }
+    document.getElementById("entry-add-meal").addEventListener("click", () => addRow("meals"));
+    document.getElementById("entry-add-workout").addEventListener("click", () => addRow("workouts"));
+    let pendingEstimates = 0;
+    const estimateMessages = ["meal", "workout"].map(type => document.getElementById(`entry-estimate-${type}-status`));
+    async function estimateCalories(kind, type, button, message) {
+        if (button.disabled || !activeDate) return;
+        const targets = rows(kind).filter(row => row.querySelector('[data-calories]').value === "");
+        if (!targets.length) {
+            message.textContent = rows(kind).length
+                ? "カロリーは入力済みです。調べ直す項目のカロリー欄を空にしてください。"
+                : "「追加」から食事・運動の内容を入力してください。";
+            return;
+        }
+        const missing = targets.find(row => !row.querySelector('[data-name]').value.trim());
+        if (missing) {
+            message.textContent = "食事の内容と量、または運動の内容と時間・回数を入力してください。";
+            missing.querySelector('[data-name]').focus();
+            return;
+        }
+        if (type === "workout" && !whole.reportValidity()) return;
+        const weightKg = type === "workout" && whole.value !== ""
+            ? Number(whole.value) + Number(decimal.value) / 10 : null;
+        const date = activeDate;
+        const originalLabel = button.innerHTML;
+        button.disabled = true;
+        button.textContent = "AIが調べています…";
+        button.setAttribute("aria-busy", "true");
+        pendingEstimates++;
+        document.getElementById("entry-save").disabled = true;
+        message.textContent = targets.length + "件のカロリーを調べています…";
+        let applied = 0;
+        let skipped = 0;
+        let failed = 0;
+        let failureMessage = "";
+        try {
+            await Promise.all(targets.map(async row => {
+                const name = row.querySelector('[data-name]');
+                const calories = row.querySelector('[data-calories]');
+                const description = name.value.trim();
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 110000);
+                try {
+                    const response = await Promise.reject(new Error("AIが未接続のため利用できません。"));
+                    if (!response.ok) {
+                        throw new Error(response.status === 503
+                            ? "AIが未接続のため推定できません。カロリーを手入力してください。"
+                            : "カロリーを推定できませんでした。再試行するか、手入力してください。");
+                    }
+                    const result = await response.json();
+                    if (!Number.isInteger(result.calories) || result.calories < 0 || result.calories > 100000) {
+                        throw new Error("推定結果を読み取れませんでした。再試行するか、手入力してください。");
+                    }
+                    // 待機中に編集・削除された行や別の日付には結果を反映しない。
+                    if (activeDate !== date || !row.isConnected || name.value.trim() !== description || calories.value !== "") {
+                        skipped++;
+                        return;
+                    }
+                    calories.value = result.calories;
+                    applied++;
+                    updateTotals();
+                } catch (error) {
+                    failed++;
+                    failureMessage = error.name === "AbortError"
+                        ? "推定に時間がかかっています。再試行するか、手入力してください。"
+                        : error instanceof TypeError
+                            ? "AIに接続できませんでした。再試行するか、手入力してください。"
+                            : "カロリーを推定できませんでした。再試行するか、手入力してください。";
+                    if (error.message.startsWith("AIが未接続")) failureMessage = error.message;
+                } finally { clearTimeout(timeout); }
+            }));
+            if (activeDate === date) {
+                message.textContent = [
+                    applied ? applied + "件のカロリーを反映しました。推定値は変更できます。" : "",
+                    skipped ? skipped + "件は入力内容が変わったため反映しませんでした。" : "",
+                    failed ? failed + "件を推定できませんでした。" + failureMessage : ""
+                ].filter(Boolean).join(" ");
+            }
+        } finally {
+            button.disabled = false;
+            button.innerHTML = originalLabel;
+            button.removeAttribute("aria-busy");
+            pendingEstimates--;
+            document.getElementById("entry-save").disabled = pendingEstimates > 0;
+        }
+    }
+    for (const [kind, type] of [["meals", "meal"], ["workouts", "workout"]]) {
+        const button = document.getElementById("entry-estimate-" + type);
+        const message = document.getElementById("entry-estimate-" + type + "-status");
+        button.addEventListener("click", () => estimateCalories(kind, type, button, message));
+    }
+    form.addEventListener("input", () => { updateTotals(); status.textContent = ""; });
+    document.addEventListener("record-entry-open", () => {
+        const now = new Date();
+        const date = panel.dataset.date || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        if (date !== activeDate) {
+            activeDate = null;
+            estimateMessages.forEach(message => { message.textContent = ""; });
+            let saved;
+            try { saved = window.recordStore.read(date); }
+            catch {
+                status.textContent = "保存済みの記録を読み込めません。ブラウザーの保存設定をご確認ください。";
+                return;
+            }
+            activeDate = date;
+            title.textContent = `${Number(date.slice(5, 7))}月${Number(date.slice(8))}日の記録`;
+            lists.meals.replaceChildren();
+            lists.workouts.replaceChildren();
+            for (const kind of ["meals", "workouts"]) {
+                (saved?.[kind] ?? []).forEach(item => addRow(kind, item, false));
+            }
+            whole.value = saved?.weight == null ? "" : Math.floor(saved.weight);
+            decimal.value = saved?.weight == null ? "0" : String(Math.round(saved.weight * 10) % 10);
+            status.textContent = "";
+            updateTotals();
+        }
+        title.focus();
+    });
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+        if (pendingEstimates || !activeDate || !form.reportValidity()) return;
+        const record = { date: activeDate, weight: whole.value === "" ? null : Number(whole.value) + Number(decimal.value) / 10 };
+        for (const kind of ["meals", "workouts"]) {
+            record[kind] = rows(kind).map(row => {
+                const item = {
+                    name: row.querySelector('[data-name]').value.trim(),
+                    calories: Number(row.querySelector('[data-calories]').value)
+                };
+                if (kind === "meals") {
+                    item.category = row.querySelector('[data-category]').value;
+                    for (const { key } of nutrientFields) {
+                        const input = row.querySelector(`[data-nutrient="${key}"]`);
+                        item[key] = input.value === "" ? null : input.valueAsNumber;
+                    }
+                }
+                return item;
+            });
+            if (record[kind].some(item => !item.name)) {
+                status.textContent = "食事・運動の内容を入力してください。";
+                return;
+            }
+        }
+        try { window.recordStore.save(record); }
+        catch { status.textContent = "保存できませんでした。ブラウザーの保存設定や空き容量をご確認ください。"; return; }
+        document.dispatchEvent(new CustomEvent("daily-record-saved", { detail: record }));
+        status.textContent = "記録を保存しました。「topに戻る」から確認できます。";
+    });
+});
+
+;
+document.addEventListener("DOMContentLoaded", () => {
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let selectedDate = new Date(today);
+
+    let displayedMonth = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        1
+    );
+
+
+    function dateKey(date) {
+
+        const year = date.getFullYear();
+
+        const month = String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+        const day = String(
+            date.getDate()
+        ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    function japaneseDate(date) {
+
+        return new Intl.DateTimeFormat(
+            "ja-JP",
+            {
+                month: "long",
+                day: "numeric",
+                weekday: "short"
+            }
+        ).format(date);
+    }
+
+
+    function shortDate(date) {
+        return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+
+
+    function sameDate(first, second) {
+
+        return (
+            first.getFullYear() === second.getFullYear()
+            && first.getMonth() === second.getMonth()
+            && first.getDate() === second.getDate()
+        );
+    }
+
+
+    function average(numbers) {
+
+        if (numbers.length === 0) {
+            return 0;
+        }
+
+        return numbers.reduce(
+            (total, number) => total + number,
+            0
+        ) / numbers.length;
+    }
+
+
+    function signedDecimal(number, unit) {
+
+        const sign = number > 0 ? "+" : "";
+
+        return `${sign}${number.toFixed(1)} ${unit}`;
+    }
+
+
+    function signedInteger(number, unit) {
+
+        const sign = number > 0 ? "+" : "";
+
+        return `${sign}${Math.round(number).toLocaleString()} ${unit}`;
+    }
+
+
+    // 保存した日別記録だけを表示する。提案は実績として扱わない。
+    const dailyRecords = new Map();
+    const weightHistory = [];
+    const calorieHistory = [];
+
+    /* ========================================
+       日別記録表示
+    ========================================= */
+
+    const selectedDateTitle =
+        document.getElementById("selected-date-title");
+
+    const mealRecordList =
+        document.getElementById("meal-record-list");
+
+    const workoutRecordList =
+        document.getElementById("workout-record-list");
+
+    const totalIntake =
+        document.getElementById("total-intake-calories");
+
+    const totalWorkout =
+        document.getElementById("total-workout-calories");
+
+    const dailyBalance =
+        document.getElementById("daily-calorie-balance");
+
+
+    function recordElement(record, showNutrients = false) {
+
+        const element = document.createElement("article");
+        element.className = "record-item";
+
+        const name = document.createElement("span");
+        name.textContent = record.name;
+
+        const calories = document.createElement("strong");
+        calories.textContent =
+            `${record.calories.toLocaleString()} kcal`;
+
+        element.append(name, calories);
+        if (showNutrients) {
+            const category = document.createElement("span");
+            category.className = "record-item__category";
+            category.textContent = window.recordStore.mealCategories
+                .find(item => item.value === record.category)?.label ?? "未分類";
+            name.prepend(category);
+            const values = window.recordStore.nutrientFields
+                .filter(({ key }) => Number.isFinite(record[key]))
+                .map(({ key, label }) => `${label} ${record[key].toLocaleString("ja-JP", { maximumFractionDigits: 2 })} g`);
+            if (values.length) {
+                const nutrients = document.createElement("p");
+                nutrients.className = "record-item__nutrients";
+                nutrients.textContent = values.join(" / ");
+                element.classList.add("record-item--nutrients");
+                element.append(nutrients);
+            }
+        }
+
+        return element;
+    }
+
+
+    function emptyElement(message) {
+
+        const element = document.createElement("p");
+
+        element.className = "empty-record";
+        element.textContent = message;
+
+        return element;
+    }
+
+
+    function renderDailyRecord() {
+        document.getElementById("record-entry").dataset.date = dateKey(selectedDate);
+        document.dispatchEvent(new CustomEvent("record-date-changed", { detail: dateKey(selectedDate) }));
+
+        selectedDateTitle.textContent =
+            `${japaneseDate(selectedDate)}の記録`;
+
+        const record =
+            dailyRecords.get(dateKey(selectedDate));
+
+        mealRecordList.replaceChildren();
+        workoutRecordList.replaceChildren();
+
+
+        if (!record) {
+
+            mealRecordList.append(
+                emptyElement("この日の食事記録はありません")
+            );
+
+            workoutRecordList.append(
+                emptyElement("この日の運動記録はありません")
+            );
+
+            totalIntake.textContent = "0 kcal";
+            totalWorkout.textContent = "0 kcal";
+            dailyBalance.textContent = "-- kcal";
+
+            return;
+        }
+
+
+        const categoryOrder = new Map(window.recordStore.mealCategories.map((category, index) => [category.value, index]));
+        const categoryRank = meal => categoryOrder.get(meal.category) ?? categoryOrder.size;
+        [...record.meals].sort((first, second) => categoryRank(first) - categoryRank(second)).forEach((meal) => {
+            mealRecordList.append(recordElement(meal, true));
+        });
+        if (!record.meals.length) mealRecordList.append(emptyElement("この日の食事記録はありません"));
+
+
+        record.workouts.forEach((workout) => {
+            workoutRecordList.append(recordElement(workout));
+        });
+        if (!record.workouts.length) workoutRecordList.append(emptyElement("この日の運動記録はありません"));
+
+
+        const intake = record.meals.reduce(
+            (total, meal) => total + meal.calories,
+            0
+        );
+
+
+        const workout = record.workouts.reduce(
+            (total, exercise) =>
+                total + exercise.calories,
+            0
+        );
+
+
+        const balance =
+            intake - record.totalBurnedCalories;
+
+
+        totalIntake.textContent =
+            `${intake.toLocaleString()} kcal`;
+
+        totalWorkout.textContent =
+            `${workout.toLocaleString()} kcal`;
+
+        dailyBalance.textContent =
+            record.meals.length || record.workouts.length ? signedInteger(balance, "kcal") : "-- kcal";
+    }
+
+
+    /* ========================================
+       カレンダー
+    ========================================= */
+
+    const calendarTitle =
+        document.getElementById("calendar-title");
+
+    const calendarGrid =
+        document.getElementById("calendar-grid");
+
+
+    function hasRecord(date) {
+
+        const key = dateKey(date);
+
+        return (
+            dailyRecords.has(key)
+            || weightHistory.some(
+                (item) => dateKey(item.date) === key
+            )
+            || calorieHistory.some(
+                (item) => dateKey(item.date) === key
+            )
+        );
+    }
+
+
+    function renderCalendar() {
+
+        calendarGrid.replaceChildren();
+
+        const year = displayedMonth.getFullYear();
+        const month = displayedMonth.getMonth();
+
+        calendarTitle.textContent =
+            `${year}年 ${month + 1}月`;
+
+        const firstWeekday =
+            new Date(year, month, 1).getDay();
+
+
+        for (let index = 0; index < 42; index += 1) {
+
+            const date = new Date(
+                year,
+                month,
+                index - firstWeekday + 1
+            );
+
+            date.setHours(0, 0, 0, 0);
+
+
+            const button = document.createElement("button");
+
+            button.type = "button";
+            button.className = "calendar-day";
+
+
+            if (date.getMonth() !== month) {
+                button.classList.add("is-outside");
+            }
+
+            if (sameDate(date, today)) {
+                button.classList.add("is-today");
+            }
+
+            if (sameDate(date, selectedDate)) {
+                button.classList.add("is-selected");
+            }
+
+            if (hasRecord(date)) {
+                button.classList.add("has-record");
+            }
+
+
+            const number = document.createElement("span");
+
+            number.textContent = date.getDate();
+
+
+            const dot = document.createElement("span");
+
+            dot.className = "calendar-day__dot";
+
+
+            button.append(number, dot);
+
+
+            button.addEventListener("click", () => {
+
+                selectedDate = new Date(date);
+
+                displayedMonth = new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    1
+                );
+
+                renderCalendar();
+                renderDailyRecord();
+                renderCalorieView();
+            });
+
+
+            calendarGrid.append(button);
+        }
+    }
+
+
+    document
+        .getElementById("previous-month")
+        .addEventListener("click", () => {
+
+            displayedMonth = new Date(
+                displayedMonth.getFullYear(),
+                displayedMonth.getMonth() - 1,
+                1
+            );
+
+            renderCalendar();
+        });
+
+
+    document
+        .getElementById("next-month")
+        .addEventListener("click", () => {
+
+            displayedMonth = new Date(
+                displayedMonth.getFullYear(),
+                displayedMonth.getMonth() + 1,
+                1
+            );
+
+            renderCalendar();
+        });
+
+
+    /* ========================================
+       増減の色
+    ========================================= */
+
+    function setDifferenceColor(element, number) {
+
+        element.classList.remove("is-up", "is-down");
+
+        if (number > 0) {
+            element.classList.add("is-up");
+        }
+
+        if (number < 0) {
+            element.classList.add("is-down");
+        }
+    }
+
+
+    /* ========================================
+       体重
+    ========================================= */
+
+    function renderWeightView() {
+
+        if (!weightHistory.length) {
+            for (const id of ["current-weight", "previous-weight-difference", "weekly-weight-average", "monthly-weight-average", "total-weight-change"]) {
+                const element = document.getElementById(id);
+                element.textContent = "-- kg";
+                setDifferenceColor(element, 0);
+            }
+            renderWeightTable();
+            renderWeightBars();
+            return;
+        }
+
+        const latest =
+            weightHistory[weightHistory.length - 1];
+
+        const previous =
+            weightHistory[weightHistory.length - 2];
+
+        const difference =
+            previous ? latest.weight - previous.weight : null;
+
+        const weekly =
+            weightHistory.slice(-7);
+
+        const weeklyAverage =
+            average(weekly.map((item) => item.weight));
+
+        const monthly =
+            weightHistory.filter((item) => (
+                item.date.getFullYear() === latest.date.getFullYear()
+                && item.date.getMonth() === latest.date.getMonth()
+            ));
+
+        const monthlyAverage =
+            average(monthly.map((item) => item.weight));
+
+        const totalChange =
+            latest.weight - weightHistory[0].weight;
+
+
+        document.getElementById("current-weight").textContent =
+            `${latest.weight.toFixed(1)} kg`;
+
+        const differenceElement =
+            document.getElementById(
+                "previous-weight-difference"
+            );
+
+        differenceElement.textContent =
+            difference === null ? "-- kg" : signedDecimal(difference, "kg");
+
+        setDifferenceColor(
+            differenceElement,
+            difference
+        );
+
+
+        document.getElementById(
+            "weekly-weight-average"
+        ).textContent =
+            `${weeklyAverage.toFixed(1)} kg`;
+
+
+        document.getElementById(
+            "monthly-weight-average"
+        ).textContent =
+            `${monthlyAverage.toFixed(1)} kg`;
+
+
+        const totalChangeElement =
+            document.getElementById(
+                "total-weight-change"
+            );
+
+        totalChangeElement.textContent =
+            signedDecimal(totalChange, "kg");
+
+        setDifferenceColor(
+            totalChangeElement,
+            totalChange
+        );
+
+
+        renderWeightTable();
+        renderWeightBars();
+    }
+
+
+    function renderWeightTable() {
+
+        const body =
+            document.getElementById("weight-history-body");
+
+        body.replaceChildren();
+
+
+        [...weightHistory]
+            .reverse()
+            .forEach((record, reversedIndex) => {
+
+                const originalIndex =
+                    weightHistory.length - reversedIndex - 1;
+
+                const previous =
+                    weightHistory[originalIndex - 1];
+
+                const difference =
+                    previous
+                        ? record.weight - previous.weight
+                        : null;
+
+
+                const row = document.createElement("tr");
+
+                const dateCell = document.createElement("td");
+                dateCell.textContent = shortDate(record.date);
+
+                const weightCell = document.createElement("td");
+                weightCell.textContent =
+                    `${record.weight.toFixed(1)} kg`;
+
+                const differenceCell =
+                    document.createElement("td");
+
+                differenceCell.textContent =
+                    difference === null
+                        ? "--"
+                        : signedDecimal(difference, "kg");
+
+
+                if (difference !== null) {
+
+                    differenceCell.style.color =
+                        difference < 0
+                            ? "#07885f"
+                            : difference > 0
+                                ? "#d91f36"
+                                : "";
+                }
+
+
+                row.append(
+                    dateCell,
+                    weightCell,
+                    differenceCell
+                );
+
+                body.append(row);
+            });
+    }
+
+
+    function renderWeightBars() {
+
+        const container =
+            document.getElementById("weight-bars");
+
+        const detail =
+            document.getElementById("weight-point-detail");
+
+        container.replaceChildren();
+
+        if (!weightHistory.length) {
+            document.getElementById("weight-period").textContent = "体重の記録はまだありません";
+            detail.textContent = "「記録する」から体重を入力すると、推移を確認できます。";
+            return;
+        }
+
+        const weights =
+            weightHistory.map((item) => item.weight);
+
+        const targetWeight = window.recordProfile?.targetWeightKg;
+        const hasTarget = Number.isFinite(targetWeight) && targetWeight >= 1 && targetWeight <= 499.9;
+        const scaleWeights = hasTarget ? [...weights, targetWeight] : weights;
+
+        const minimum =
+            Math.min(...scaleWeights) - 0.5;
+
+        const maximum =
+            Math.max(...scaleWeights) + 0.3;
+
+        const range =
+            maximum - minimum;
+
+        const heightForWeight = weight => 20 + ((weight - minimum) / range) * 70;
+        container.style.setProperty("--weight-count", String(weightHistory.length));
+
+
+        document.getElementById("weight-period").textContent =
+            `${shortDate(weightHistory[0].date)} 〜 `
+            + `${shortDate(weightHistory[weightHistory.length - 1].date)}`;
+
+
+        weightHistory.forEach((record, index) => {
+
+            const height =
+                heightForWeight(record.weight);
+
+
+            const item = document.createElement("div");
+            item.className = "weight-bar-item";
+
+
+            const space = document.createElement("div");
+            space.className = "weight-bar-space";
+
+
+            const value = document.createElement("span");
+            value.className = "weight-bar-value";
+            value.textContent = record.weight.toFixed(1);
+            value.style.setProperty(
+                "--bar-height",
+                `${height}%`
+            );
+
+
+            const bar = document.createElement("button");
+            bar.type = "button";
+            bar.className = "weight-bar";
+            bar.style.setProperty(
+                "--bar-height",
+                `${height}%`
+            );
+
+
+            if (index === weightHistory.length - 1) {
+                bar.classList.add("is-selected");
+            }
+
+
+            bar.addEventListener("click", () => {
+
+                document
+                    .querySelectorAll(".weight-bar")
+                    .forEach((element) => {
+                        element.classList.remove("is-selected");
+                    });
+
+                bar.classList.add("is-selected");
+
+                detail.textContent =
+                    `${japaneseDate(record.date)}：`
+                    + `${record.weight.toFixed(1)} kg`;
+            });
+
+
+            const date = document.createElement("span");
+            date.className = "weight-bar-date";
+            date.textContent = shortDate(record.date);
+
+
+            space.append(value, bar);
+            item.append(space, date);
+            container.append(item);
+        });
+
+        if (hasTarget) {
+            const overlay = document.createElement("div");
+            overlay.className = "weight-target-overlay";
+            const line = document.createElement("div");
+            line.className = "weight-target-line";
+            line.style.setProperty("--target-height", `${heightForWeight(targetWeight)}%`);
+            const label = document.createElement("span");
+            label.className = "weight-target-label";
+            label.textContent = `目標体重 ${targetWeight.toFixed(1)} kg`;
+            line.append(label);
+            overlay.append(line);
+            container.append(overlay);
+        }
+
+        const latest =
+            weightHistory[weightHistory.length - 1];
+
+        detail.textContent =
+            `${japaneseDate(latest.date)}：`
+            + `${latest.weight.toFixed(1)} kg`;
+    }
+
+
+    /* ========================================
+       カロリー
+    ========================================= */
+
+    function selectedCalorieRecord() {
+
+        return calorieHistory.find(
+            (item) => sameDate(item.date, selectedDate)
+        );
+    }
+
+
+    function renderCalorieView() {
+
+        const selectedRecord =
+            selectedCalorieRecord();
+
+        const selectedDateText =
+            japaneseDate(selectedDate);
+
+
+        document.getElementById(
+            "selected-calorie-date"
+        ).textContent =
+            `${selectedDateText}のカロリー`;
+
+
+        document.getElementById(
+            "calorie-chart-date"
+        ).textContent =
+            selectedDateText;
+
+
+        const latestSeven =
+            calorieHistory.slice(-7);
+
+        const averageIntake =
+            average(latestSeven.map((item) => item.intake));
+
+        const averageBurned =
+            average(latestSeven.map((item) => item.burned));
+
+        const weeklyBalance =
+            latestSeven.reduce(
+                (total, item) =>
+                    total + item.intake - item.burned,
+                0
+            );
+
+
+        document.getElementById(
+            "average-intake-calories"
+        ).textContent =
+            latestSeven.length ? `${Math.round(averageIntake).toLocaleString()} kcal` : "-- kcal";
+
+
+        document.getElementById(
+            "average-burned-calories"
+        ).textContent =
+            latestSeven.length ? `${Math.round(averageBurned).toLocaleString()} kcal` : "-- kcal";
+
+
+        const weeklyBalanceElement =
+            document.getElementById(
+                "weekly-calorie-balance"
+            );
+
+        weeklyBalanceElement.textContent =
+            latestSeven.length ? signedInteger(weeklyBalance, "kcal") : "-- kcal";
+
+        setDifferenceColor(
+            weeklyBalanceElement,
+            weeklyBalance
+        );
+
+
+        const donut =
+            document.getElementById("calorie-donut");
+
+        const selectedIntake =
+            document.getElementById(
+                "selected-intake-calories"
+            );
+
+        const selectedBurned =
+            document.getElementById(
+                "selected-burned-calories"
+            );
+
+        const donutBalance =
+            document.getElementById("donut-balance");
+
+        const donutIntake =
+            document.getElementById("donut-intake");
+
+        const donutBurned =
+            document.getElementById("donut-burned");
+
+        const intakePercentageElement =
+            document.getElementById(
+                "donut-intake-percentage"
+            );
+
+        const burnedPercentageElement =
+            document.getElementById(
+                "donut-burned-percentage"
+            );
+
+        const message =
+            document.getElementById("calorie-message");
+
+
+        if (!selectedRecord) {
+
+            selectedIntake.textContent = "-- kcal";
+            selectedBurned.textContent = "-- kcal";
+            donutBalance.textContent = "-- kcal";
+            donutIntake.textContent = "-- kcal";
+            donutBurned.textContent = "-- kcal";
+            intakePercentageElement.textContent = "--%";
+            burnedPercentageElement.textContent = "--%";
+
+            donut.classList.add("is-empty");
+
+            message.textContent =
+                "この日のカロリー記録はありません";
+
+            renderCalorieTable();
+
+            return;
+        }
+
+
+        donut.classList.remove("is-empty");
+
+
+        const difference =
+            selectedRecord.intake - selectedRecord.burned;
+
+        const total =
+            selectedRecord.intake + selectedRecord.burned;
+
+        donut.classList.toggle("is-empty", total === 0);
+
+        const intakePercentage =
+            total === 0
+                ? 0
+                : selectedRecord.intake / total * 100;
+
+        const burnedPercentage =
+            total === 0 ? 0 : 100 - intakePercentage;
+
+
+        donut.style.setProperty(
+            "--intake-angle",
+            `${intakePercentage * 3.6}deg`
+        );
+
+
+        selectedIntake.textContent =
+            `${selectedRecord.intake.toLocaleString()} kcal`;
+
+        selectedBurned.textContent =
+            `${selectedRecord.burned.toLocaleString()} kcal`;
+
+        donutBalance.textContent =
+            signedInteger(difference, "kcal");
+
+        donutIntake.textContent =
+            `${selectedRecord.intake.toLocaleString()} kcal`;
+
+        donutBurned.textContent =
+            `${selectedRecord.burned.toLocaleString()} kcal`;
+
+        intakePercentageElement.textContent =
+            `${intakePercentage.toFixed(1)}%`;
+
+        burnedPercentageElement.textContent =
+            `${burnedPercentage.toFixed(1)}%`;
+
+
+        if (difference > 0) {
+
+            message.textContent =
+                `摂取が消費より`
+                + `${difference.toLocaleString()} kcal多い状態です。`;
+
+        } else if (difference < 0) {
+
+            message.textContent =
+                `消費が摂取より`
+                + `${Math.abs(difference).toLocaleString()} kcal多い状態です。`;
+
+        } else {
+
+            message.textContent =
+                "摂取と消費が同じです。";
+        }
+
+
+        renderCalorieTable();
+    }
+
+
+    function renderCalorieTable() {
+
+        const body =
+            document.getElementById("calorie-history-body");
+
+        body.replaceChildren();
+
+
+        [...calorieHistory]
+            .reverse()
+            .forEach((record) => {
+
+                const difference =
+                    record.intake - record.burned;
+
+                const row = document.createElement("tr");
+
+
+                if (sameDate(record.date, selectedDate)) {
+                    row.classList.add("is-selected");
+                }
+
+
+                const dateCell = document.createElement("td");
+                dateCell.textContent = shortDate(record.date);
+
+                const intakeCell = document.createElement("td");
+                intakeCell.textContent =
+                    record.intake.toLocaleString();
+
+                const burnedCell = document.createElement("td");
+                burnedCell.textContent =
+                    record.burned.toLocaleString();
+
+                const differenceCell =
+                    document.createElement("td");
+
+                differenceCell.textContent =
+                    signedInteger(difference, "").trim();
+
+
+                differenceCell.style.color =
+                    difference < 0
+                        ? "#07885f"
+                        : difference > 0
+                            ? "#d91f36"
+                            : "";
+
+
+                row.append(
+                    dateCell,
+                    intakeCell,
+                    burnedCell,
+                    differenceCell
+                );
+
+
+                row.addEventListener("click", () => {
+
+                    selectedDate = new Date(record.date);
+
+                    displayedMonth = new Date(
+                        selectedDate.getFullYear(),
+                        selectedDate.getMonth(),
+                        1
+                    );
+
+                    renderCalendar();
+                    renderDailyRecord();
+                    renderCalorieView();
+                });
+
+
+                body.append(row);
+            });
+    }
+
+
+    /* ========================================
+       画面切り替え
+    ========================================= */
+
+    const viewNames = [
+        "calendar",
+        "weight",
+        "calories",
+        "feedback"
+    ];
+
+    const viewLabels = {
+        calendar: "カレンダー",
+        weight: "体重の推移",
+        calories: "カロリー",
+        feedback: "振り返り"
+    };
+
+    let currentViewIndex = 0;
+
+    const viewTrack =
+        document.getElementById("view-track");
+
+    const viewButtons =
+        document.querySelectorAll(
+            ".record-view-tabs__button"
+        );
+
+    const leftViews =
+        document.querySelectorAll("[data-left-view]");
+
+    const centerViews =
+        document.querySelectorAll("[data-center-view]");
+
+    const previousLabel =
+        document.getElementById("previous-view-label");
+
+    const nextLabel =
+        document.getElementById("next-view-label");
+
+
+    function switchView(viewName) {
+
+        const index = viewNames.indexOf(viewName);
+
+        if (index === -1) {
+            return;
+        }
+
+        currentViewIndex = index;
+
+        viewTrack.style.transform =
+            `translateX(-${index * 100}%)`;
+
+
+        viewButtons.forEach((button) => {
+
+            const active =
+                button.dataset.view === viewName;
+
+            button.classList.toggle(
+                "record-view-tabs__button--active",
+                active
+            );
+
+            button.setAttribute(
+                "aria-selected",
+                String(active)
+            );
+        });
+
+
+        leftViews.forEach((view) => {
+
+            view.classList.toggle(
+                "left-content--active",
+                view.dataset.leftView === viewName
+            );
+        });
+
+
+        centerViews.forEach((view) => {
+            view.inert = view.dataset.centerView !== viewName;
+
+            view.setAttribute(
+                "aria-hidden",
+                String(
+                    view.dataset.centerView !== viewName
+                )
+            );
+        });
+
+
+        const previous =
+            viewNames[index - 1];
+
+        const next =
+            viewNames[index + 1];
+
+
+        previousLabel.textContent =
+            previous
+                ? `← ${viewLabels[previous]}`
+                : "";
+
+        nextLabel.textContent =
+            next
+                ? `${viewLabels[next]} →`
+                : "";
+        document.dispatchEvent(new CustomEvent("record-view-changed", { detail: viewName }));
+    }
+
+    document.addEventListener("record-view-request", event => switchView(event.detail));
+
+
+    viewButtons.forEach((button) => {
+
+        button.addEventListener("click", () => {
+            switchView(button.dataset.view);
+        });
+    });
+
+
+    function previousView() {
+
+        if (currentViewIndex > 0) {
+
+            switchView(
+                viewNames[currentViewIndex - 1]
+            );
+        }
+    }
+
+
+    function nextView() {
+
+        if (currentViewIndex < viewNames.length - 1) {
+
+            switchView(
+                viewNames[currentViewIndex + 1]
+            );
+        }
+    }
+
+
+    /* ========================================
+       スワイプ
+    ========================================= */
+
+    const viewport =
+        document.getElementById("view-viewport");
+
+    let startX = 0;
+    let startY = 0;
+    let pointerDown = false;
+
+
+    viewport.addEventListener("pointerdown", (event) => {
+
+        startX = event.clientX;
+        startY = event.clientY;
+        pointerDown = true;
+    });
+
+
+    viewport.addEventListener("pointerup", (event) => {
+
+        if (!pointerDown) {
+            return;
+        }
+
+        pointerDown = false;
+
+        const moveX = event.clientX - startX;
+        const moveY = event.clientY - startY;
+
+        const horizontal =
+            Math.abs(moveX) > 55
+            && Math.abs(moveX) > Math.abs(moveY) * 1.2;
+
+        if (!horizontal) {
+            return;
+        }
+
+        if (moveX < 0) {
+            nextView();
+        } else {
+            previousView();
+        }
+    });
+
+
+    viewport.addEventListener("pointercancel", () => {
+        pointerDown = false;
+    });
+
+
+    /* ========================================
+       横スクロール
+    ========================================= */
+
+    let wheelLocked = false;
+
+
+    viewport.addEventListener(
+        "wheel",
+        (event) => {
+
+            const horizontal =
+                Math.abs(event.deltaX);
+
+            const shiftHorizontal =
+                event.shiftKey
+                    ? Math.abs(event.deltaY)
+                    : 0;
+
+            if (
+                Math.max(horizontal, shiftHorizontal) < 25
+                || wheelLocked
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+
+            wheelLocked = true;
+
+            const direction =
+                horizontal > 0
+                    ? event.deltaX
+                    : event.deltaY;
+
+            if (direction > 0) {
+                nextView();
+            } else {
+                previousView();
+            }
+
+            window.setTimeout(() => {
+                wheelLocked = false;
+            }, 500);
+        },
+        {
+            passive: false
+        }
+    );
+
+
+    viewport.addEventListener("keydown", (event) => {
+
+        if (event.key === "ArrowLeft") {
+            previousView();
+        }
+
+        if (event.key === "ArrowRight") {
+            nextView();
+        }
+    });
+
+
+    /* ========================================
+       初期表示
+    ========================================= */
+
+    document.addEventListener("profile-updated", renderWeightBars);
+
+    function applySavedRecord(record) {
+        const date = new Date(record.date + "T00:00:00");
+        const intake = record.meals.reduce((sum, item) => sum + item.calories, 0);
+        const burned = record.workouts.reduce((sum, item) => sum + item.calories, 0);
+        dailyRecords.set(record.date, { ...record, totalBurnedCalories: burned });
+        const replaceHistory = (history, value) => {
+            const index = history.findIndex(item => dateKey(item.date) === record.date);
+            if (index !== -1) history.splice(index, 1);
+            if (value) history.push(value);
+            history.sort((first, second) => first.date - second.date);
+        };
+        replaceHistory(calorieHistory, record.meals.length || record.workouts.length ? { date, intake, burned } : null);
+        replaceHistory(weightHistory, record.weight === null ? null : { date, weight: record.weight });
+    }
+    try { window.recordStore?.all().forEach(applySavedRecord); }
+    catch { /* 保存領域が使用できない場合もダッシュボードは表示する。 */ }
+    document.addEventListener("daily-record-saved", event => {
+        applySavedRecord(event.detail);
+        renderCalendar();
+        renderDailyRecord();
+        renderWeightView();
+        renderCalorieView();
+    });
+    renderCalendar();
+    renderDailyRecord();
+    renderWeightView();
+    renderCalorieView();
+    switchView("calendar");
+
+});
+
+;
+// 仮版: 外部AIを呼ばず、入力済みの記録から事実と次の一歩をまとめる。
+(() => {
+    const fields = [
+        { key: "proteinG", label: "タンパク質" },
+        { key: "fatG", label: "脂質" },
+        { key: "carbohydratesG", label: "炭水化物" },
+        { key: "fiberG", label: "食物繊維" },
+        { key: "saltG", label: "塩分" }
+    ];
+    const dateKey = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    function shiftDays(date, days) {
+        const result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+    }
+    function weekStart(date) {
+        const start = new Date(date);
+        start.setHours(0, 0, 0, 0);
+        return shiftDays(start, -((start.getDay() + 6) % 7));
+    }
+    function periodStart(kind, date) {
+        if (kind === "month") return new Date(date.getFullYear(), date.getMonth(), 1);
+        if (kind === "year") return new Date(date.getFullYear(), 0, 1);
+        return weekStart(date);
+    }
+    function shiftPeriod(kind, date, amount) {
+        const start = periodStart(kind, date);
+        if (kind === "month") return new Date(start.getFullYear(), start.getMonth() + amount, 1);
+        if (kind === "year") return new Date(start.getFullYear() + amount, 0, 1);
+        return shiftDays(start, amount * 7);
+    }
+    function periodRange(kind, date, records = [], now = new Date()) {
+        if (kind === "all") {
+            const end = new Date(now);
+            end.setHours(0, 0, 0, 0);
+            const dates = records.filter(record => record.date <= dateKey(end)
+                && (record.meals.length || record.workouts.length || Number.isFinite(record.weight)))
+                .map(record => record.date).sort();
+            return { start: dates.length ? new Date(dates[0] + "T00:00:00") : end, end };
+        }
+        const start = periodStart(kind, date);
+        return { start, end: shiftDays(shiftPeriod(kind, start, 1), -1) };
+    }
+    function summarize(records, start, end) {
+        const from = dateKey(start);
+        const to = dateKey(end);
+        const selected = records.filter(record => record.date >= from && record.date <= to);
+        const meals = selected.flatMap(record => record.meals);
+        const workouts = selected.flatMap(record => record.workouts);
+        return {
+            days: selected.filter(record => record.meals.length || record.workouts.length || Number.isFinite(record.weight)).length,
+            mealDays: selected.filter(record => record.meals.length).length,
+            workoutDays: selected.filter(record => record.workouts.length).length,
+            mealCount: meals.length,
+            intake: meals.reduce((total, meal) => total + meal.calories, 0),
+            burned: workouts.reduce((total, workout) => total + workout.calories, 0),
+            nutrients: fields.map(field => {
+                const entered = meals.filter(meal => Number.isFinite(meal[field.key]));
+                return { ...field, count: entered.length, total: entered.reduce((total, meal) => total + meal[field.key], 0) };
+            })
+        };
+    }
+    const format = number => number.toLocaleString("ja-JP", { maximumFractionDigits: 1 });
+    function comments(summary, previous = null, comparison = { previous: "前週", current: "この週" }) {
+        const positive = summary.mealDays && summary.workoutDays
+            ? `食事を${summary.mealDays}日、運動を${summary.workoutDays}日記録できました。両方の記録が、振り返りの手がかりになっています。`
+            : summary.mealDays ? `食事を${summary.mealDays}日記録できました。食べたものを振り返る材料が残せています。`
+                : summary.workoutDays ? `運動を${summary.workoutDays}日記録できました。取り組んだことが記録に残っています。`
+                    : "体重の記録を残せています。食事や運動も記録すると、振り返れる内容が増えます。";
+        const protein = summary.nutrients.find(field => field.key === "proteinG");
+        const observations = [];
+        if (summary.mealDays) observations.push(`食事を記録した日の平均摂取は${format(summary.intake / summary.mealDays)} kcalです。入力済みの食事だけを集計しています。`);
+        if (protein.count) observations.push(`タンパク質は${summary.mealCount}件中${protein.count}件に入力があり、合計${format(protein.total)} gでした。`);
+        if (summary.workoutDays) observations.push(`記録した運動の消費は合計${format(summary.burned)} kcalです。`);
+        if (previous?.days) observations.push(`運動の記録日数は、${comparison.previous}${previous.workoutDays}日・${comparison.current}${summary.workoutDays}日です。未記録の日の活動は含みません。`);
+        const incomplete = summary.nutrients.some(field => field.count < summary.mealCount);
+        const next = !summary.mealDays
+            ? "次の食事を1件、食べたものと量から記録してみましょう。"
+            : incomplete
+                ? "次に記録する食事を1件だけ、食品表示などで分かる栄養値も一緒に入力してみましょう。"
+                : !summary.workoutDays
+                    ? "次に運動したときは、内容と時間も記録してみましょう。休養日に無理に増やす必要はありません。"
+                    : "記録できた食事や運動のうち、続けやすかったものを1つ選んでみましょう。";
+        return { positive, trend: observations.join("\n") || "この期間の食事・運動はまだ記録されていません。", next };
+    }
+    window.recordFeedback = { dateKey, shiftDays, weekStart, periodStart, shiftPeriod, periodRange, summarize, comments };
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const byId = id => document.getElementById(id);
+        if (!byId("feedback-report") || !window.recordStore) return;
+        const ackPrefix = "toresyoku.feedback.ack.";
+        const acknowledged = new Set();
+        let records = [];
+        let storageUnavailable = false;
+        const periods = {
+            week: { unit: "週", title: "一週間の振り返り", current: "今週", previous: "先週", comparison: "前週" },
+            month: { unit: "月", title: "一か月の振り返り", current: "今月", previous: "先月", comparison: "前月" },
+            year: { unit: "年", title: "一年間の振り返り", current: "今年", previous: "昨年", comparison: "前年" },
+            all: { title: "すべての振り返り" }
+        };
+        let selectedKind = "week";
+        const selectedPeriods = {
+            week: shiftDays(weekStart(new Date()), -7),
+            month: periodStart("month", new Date()),
+            year: periodStart("year", new Date())
+        };
+        let selectedDay = byId("record-entry").dataset.date;
+        let sample = false;
+        let active = false;
+        const latestWeek = () => shiftDays(weekStart(new Date()), -7);
+        const rangeLabel = (start, end = shiftDays(start, 6)) => `${dateKey(start).replaceAll("-", "/")} 〜 ${dateKey(end).replaceAll("-", "/")}`;
+        const node = (tag, className, text) => {
+            const element = document.createElement(tag);
+            if (className) element.className = className;
+            if (text != null) element.textContent = text;
+            return element;
+        };
+        function readRecords() {
+            try { records = window.recordStore.all(); storageUnavailable = false; }
+            catch { records = []; storageUnavailable = true; }
+        }
+        function isAcknowledged(start) {
+            const key = dateKey(start);
+            if (acknowledged.has(key)) return true;
+            try { return Boolean(localStorage.getItem(ackPrefix + key)); }
+            catch { return false; }
+        }
+        function acknowledge(start, reason) {
+            const key = dateKey(start);
+            acknowledged.add(key);
+            try { localStorage.setItem(ackPrefix + key, reason); }
+            catch { /* 保存できない場合も、この画面を開いている間は再表示しない。 */ }
+        }
+        function renderNotice() {
+            const start = latestWeek();
+            const summary = summarize(records, start, shiftDays(start, 6));
+            byId("feedback-notice").hidden = !summary.days || isAcknowledged(start);
+            byId("feedback-notice-summary").textContent = `${rangeLabel(start)} · 食事の記録${summary.mealDays}日 / 運動の記録${summary.workoutDays}日`;
+        }
+        function card(title, text, extraClass = "") {
+            const element = node("article", `feedback-card ${extraClass}`);
+            element.append(node("h3", "", title), node("p", "", text));
+            return element;
+        }
+        function renderReport() {
+            const report = byId("feedback-report");
+            report.replaceChildren();
+            const now = new Date();
+            const all = selectedKind === "all";
+            const definition = periods[selectedKind];
+            const current = periodStart(selectedKind, now);
+            const source = records;
+            const { start, end } = periodRange(selectedKind, selectedPeriods[selectedKind], source, now);
+            // 今週・今月・今年・全期間のどれでも、今日より先の記録を集計しない。
+            const through = end > now ? now : end;
+            const summary = summarize(source, start, through);
+            const previous = sample || all ? null : summarize(records, shiftPeriod(selectedKind, start, -1), shiftDays(start, -1));
+            const inProgress = !all && dateKey(start) === dateKey(current);
+            byId("feedback-title").textContent = definition.title;
+            byId("feedback-period").textContent = all ? (summary.days ? rangeLabel(start, through) : "記録開始 〜 今日")
+                : selectedKind === "month" ? `${start.getFullYear()}年${start.getMonth() + 1}月`
+                    : selectedKind === "year" ? `${start.getFullYear()}年` : rangeLabel(start, end);
+            byId("feedback-period-label").textContent = all ? "全期間" : inProgress ? `${definition.current}・途中`
+                : dateKey(start) === dateKey(shiftPeriod(selectedKind, current, -1)) ? definition.previous : `過去の${definition.unit}`;
+            byId("feedback-previous").hidden = all;
+            byId("feedback-next").hidden = all;
+            byId("feedback-previous").disabled = all;
+            byId("feedback-next").disabled = all || start >= current;
+            byId("feedback-previous").setAttribute("aria-label", all ? "前の期間" : `前の${definition.unit}`);
+            byId("feedback-next").setAttribute("aria-label", all ? "次の期間" : `次の${definition.unit}`);
+            document.querySelectorAll('[name="feedback-period-kind"]').forEach(input => { input.checked = input.value === selectedKind; });
+            byId("feedback-source").textContent = "記録から作成した振り返り";
+            if (!summary.days) {
+                const empty = node("div", "feedback-empty");
+                empty.append(node("h3", "", storageUnavailable ? "記録を読み込めませんでした" : all ? "記録はまだありません" : `この${definition.unit}の記録はまだありません`),
+                    node("p", "", storageUnavailable ? "ブラウザーの保存設定を確認してください。"
+                        : "食事や運動を記録すると、ここに振り返りが表示されます。期間を切り替えて確認できます。"));
+                report.append(empty);
+                return;
+            }
+            const stats = node("div", "feedback-stats");
+            for (const [label, value] of [
+                ["食事を記録した日", `${summary.mealDays}日`],
+                ["運動を記録した日", `${summary.workoutDays}日`],
+                ["食事記録日の平均摂取", summary.mealDays ? `${format(summary.intake / summary.mealDays)} kcal` : "未記録"],
+                ["記録した運動の消費合計", summary.workoutDays ? `${format(summary.burned)} kcal` : "未記録"]
+            ]) {
+                const stat = node("div", "feedback-stat");
+                stat.append(node("span", "", label), node("strong", "", value));
+                stats.append(stat);
+            }
+            const feedback = comments(summary, previous, { previous: definition.comparison, current: `この${definition.unit}${inProgress ? "（今日まで）" : ""}` });
+            report.append(stats, node("p", "feedback-muted", `集計対象：${rangeLabel(start, through)}。この期間の記録は${summary.days}日分です。食事をすべて入力したかは判別できないため、摂取量の過不足は評価していません。`),
+                card("できたこと", feedback.positive), card("記録から分かること", feedback.trend), card("次に試すことをひとつ", feedback.next, "feedback-card--next"));
+            const nutrients = node("section", "feedback-nutrients");
+            nutrients.append(node("h3", "", "栄養素の合計（入力済み分）"));
+            const list = node("dl");
+            summary.nutrients.forEach(field => {
+                const row = node("div");
+                const value = node("dd", "", field.count ? `${format(field.total)} g` : "未入力");
+                if (summary.mealCount) value.append(node("small", "", `${summary.mealCount}件中${field.count}件に入力`));
+                row.append(node("dt", "", field.label), value);
+                list.append(row);
+            });
+            nutrients.append(list, node("p", "feedback-muted", "未入力の栄養素は合計に含めていません。運動の消費カロリーに、基礎代謝や日常生活での消費は含まれません。"));
+            report.append(nutrients);
+            if (active && !sample && selectedKind === "week" && dateKey(start) === dateKey(latestWeek())) {
+                acknowledge(start, "viewed");
+                renderNotice();
+            }
+        }
+        function renderDaily() {
+            const content = byId("daily-feedback-content");
+            content.replaceChildren();
+            if (!selectedDay) return;
+            if (selectedDay > dateKey(new Date())) {
+                content.append(node("p", "", "未来の日付はまだ振り返れません。記録した日を選んでください。"));
+                return;
+            }
+            const day = new Date(selectedDay + "T00:00:00");
+            const summary = summarize(records, day, day);
+            if (!summary.days) {
+                content.append(node("p", "", storageUnavailable ? "記録を読み込めませんでした。ブラウザーの保存設定を確認してください。" : "この日の記録はまだありません。食事や運動を記録すると、ここから振り返れます。"));
+                return;
+            }
+            const feedback = comments(summary);
+            content.append(node("p", "", feedback.positive), node("p", "", feedback.trend), node("p", "", `次に試すこと：${feedback.next}`),
+                node("p", "feedback-muted", "入力済みの記録だけを振り返っています。未入力を不足と判定しません。"));
+        }
+        byId("feedback-notice-open").addEventListener("click", () => {
+            selectedKind = "week";
+            selectedPeriods.week = latestWeek();
+            sample = false;
+            document.dispatchEvent(new CustomEvent("record-view-request", { detail: "feedback" }));
+            byId("feedback-title").focus({ preventScroll: true });
+            byId("feedback-title").scrollIntoView({ block: "nearest" });
+        });
+        byId("feedback-notice-dismiss").addEventListener("click", () => {
+            acknowledge(latestWeek(), "dismissed");
+            renderNotice();
+            document.querySelector('[data-view="calendar"]').focus({ preventScroll: true });
+        });
+        byId("feedback-granularity").addEventListener("change", event => {
+            if (!Object.hasOwn(periods, event.target.value)) return;
+            selectedKind = event.target.value;
+            renderReport();
+        });
+        // ラジオボタンの矢印キーは集計単位だけを変更し、外側の画面スワイプには伝えない。
+        byId("feedback-granularity").addEventListener("keydown", event => {
+            if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) event.stopPropagation();
+        });
+        byId("feedback-previous").addEventListener("click", () => {
+            if (selectedKind === "all") return;
+            selectedPeriods[selectedKind] = shiftPeriod(selectedKind, selectedPeriods[selectedKind], -1);
+            renderReport();
+        });
+        byId("feedback-next").addEventListener("click", () => {
+            if (selectedKind === "all") return;
+            if (selectedPeriods[selectedKind] < periodStart(selectedKind, new Date())) {
+                selectedPeriods[selectedKind] = shiftPeriod(selectedKind, selectedPeriods[selectedKind], 1);
+            }
+            renderReport();
+        });
+        byId("daily-feedback").addEventListener("toggle", () => { if (byId("daily-feedback").open) renderDaily(); });
+        document.addEventListener("record-view-changed", event => {
+            active = event.detail === "feedback";
+            readRecords();
+            renderNotice();
+            if (active) renderReport();
+        });
+        document.addEventListener("record-date-changed", event => {
+            if (selectedDay !== event.detail) byId("daily-feedback").open = false;
+            selectedDay = event.detail;
+        });
+        function refresh() {
+            readRecords();
+            renderNotice();
+            if (active) renderReport();
+            if (byId("daily-feedback").open) renderDaily();
+        }
+        document.addEventListener("daily-record-saved", refresh);
+        document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+        window.addEventListener("storage", event => {
+            if (!event.key || event.key.startsWith("toresyoku.daily-record.") || event.key.startsWith(ackPrefix)) refresh();
+        });
+        readRecords();
+        renderNotice();
+        renderReport();
+    });
+})();</script></body>
+</html>
