@@ -1784,7 +1784,9 @@ body .record-header, .record-dashboard { background: var(--frame-color, var(--re
 .profile-field { display: grid; grid-template-columns: auto minmax(0, 1fr) 26px; align-items: center; gap: 6px; margin: 10px 0; }
 .profile-field label { min-width: 5.5em; text-align: right; }
 .profile-field input { width: 100%; min-width: 0; padding: 6px; border: 1px solid #888; border-radius: 0; background: #fff; }
-.profile-reset { margin-top: 12px; padding: 8px 12px; border: 1px solid var(--black); background: #fff; font-size: 13px; cursor: pointer; }
+.profile-save, .profile-reset { padding: 8px 12px; border: 1px solid var(--black); cursor: pointer; }
+.profile-save { display: block; margin: 16px 0 0 auto; color: #fff; background: #151515; }
+.profile-reset { margin-top: 12px; background: #fff; font-size: 13px; }
 .profile-palette { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); margin: 24px 0 16px; }
 .profile-swatch { aspect-ratio: 1; min-width: 0; padding: 0; border: 0; background: var(--swatch); cursor: pointer; }
 .profile-swatch[aria-checked="true"] { position: relative; outline: 2px solid #fff; outline-offset: -3px; box-shadow: inset 0 0 0 4px #151515; }
@@ -1793,6 +1795,16 @@ body .record-header, .record-dashboard { background: var(--frame-color, var(--re
 #profile-color-value { font-variant-numeric: tabular-nums; }
 .profile-hint, .profile-status { margin-top: 16px; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 .profile-status:empty { display: none; }
+.profile-logout { margin: 28px 0 4px; padding-top: 16px; border-top: 1px solid #777; text-align: right; }
+.profile-logout button {
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: #0000ee;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
 .profile-panel :focus-visible { position: relative; outline: 3px solid #151515; outline-offset: 2px; }
 .record-dashboard--profile .record-panel--left { overflow-y: auto; }
 @media (max-width: 900px) {
@@ -1800,7 +1812,8 @@ body .record-header, .record-dashboard { background: var(--frame-color, var(--re
     .record-dashboard--profile .profile-panel { order: -1; overflow: visible; }
     .profile-palette { max-width: 360px; }
 }
-</style><style>/* main の提案フォームを記録画面と共通の色・パネルで表示する。 */
+
+.profile-details .field{display:block;margin:12px 0}.profile-details .field>span{display:block;margin-bottom:5px}.profile-details input,.profile-details select{width:100%;min-width:0;padding:8px;border:1px solid #888;background:#fff;font:inherit}.profile-details .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.profile-details .button{padding:8px 12px;border:1px solid #151515;background:#151515;color:#fff;cursor:pointer}.profile-details .hint{font-size:13px;margin:10px 0}.profile-details-open{cursor:pointer}@media(max-width:600px){.profile-details .grid{grid-template-columns:1fr}}</style><style>/* main の提案フォームを記録画面と共通の色・パネルで表示する。 */
 body.suggestion-page { height: auto; min-height: 100dvh; overflow: auto; background: var(--red); }
 body .suggestion-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 28px; }
 .suggestion-brand { color: var(--white); font-size: 28px; font-weight: 800; text-decoration: none; }
@@ -2746,55 +2759,18 @@ body .suggestion-header { display: flex; align-items: center; justify-content: s
         <aside class="record-panel profile-panel" id="profile-panel" aria-labelledby="profile-title" hidden>
             <form id="profile-form">
                 <section class="profile-section">
-                    <h1 id="profile-title" tabindex="-1">プロフィール・提案条件</h1>
-                    <div class="suggestion-fields">
-    <h2 class="suggestion-section-title">あなたのこと</h2>
-    <div class="suggestion-grid">
-        <div class="suggestion-field">
-            <label for="heightCm">身長 <small>cm</small></label>
-            <input type="number" min="100" max="250" step="1" inputmode="numeric" required aria-describedby="height-error" id="heightCm" name="heightCm" value="172">
-            <p class="suggestion-error" id="height-error"></p>
-        </div>
-        <div class="suggestion-field">
-            <label for="weightKg">体重 <small>kg</small></label>
-            <input type="number" min="30" max="200" step="1" inputmode="numeric" required aria-describedby="weight-error" id="weightKg" name="weightKg" value="68">
-            <p class="suggestion-error" id="weight-error"></p>
-        </div>
-        <div class="suggestion-field">
-            <label for="age">年齢 <small>歳</small></label>
-            <input type="number" min="15" max="90" step="1" inputmode="numeric" required aria-describedby="age-error" id="age" name="age" value="19">
-            <p class="suggestion-error" id="age-error"></p>
-        </div>
-        <div class="suggestion-field">
-            <label for="gender">性別</label>
-            <select required aria-describedby="gender-error" id="gender" name="gender">
-                <option value="男性" selected>男性</option><option value="女性">女性</option><option value="回答しない">回答しない</option></select>
-            <p class="suggestion-error" id="gender-error"></p>
-        </div>
-        <div class="suggestion-field">
-            <label for="goal">目標</label>
-            <select required aria-describedby="goal-error" id="goal" name="goal">
-                <option value="体を絞りたい" selected>体を絞りたい</option><option value="筋肉をつけたい">筋肉をつけたい</option><option value="体重を増やしたい">体重を増やしたい</option><option value="健康を維持したい">健康を維持したい</option></select>
-            <p class="suggestion-error" id="goal-error"></p>
-        </div>
-        <div class="suggestion-field">
-            <label for="environment">運動環境</label>
-            <select required aria-describedby="environment-error" id="environment" name="environment">
-                <option value="自宅（自重トレのみ）" selected>自宅（自重トレのみ）</option><option value="自宅（ダンベルあり）">自宅（ダンベルあり）</option><option value="ジムに通える">ジムに通える</option><option value="外を走れる">外を走れる</option></select>
-            <p class="suggestion-error" id="environment-error"></p>
-        </div>
-    </div>
-    <div class="suggestion-field">
-        <label for="allergy">アレルギー・苦手な食べ物 <small>任意</small></label>
-        <input type="text" maxlength="200" placeholder="例：卵アレルギー、牛乳が苦手" aria-describedby="allergy-error" id="allergy" name="allergy" value="">
-        <p class="suggestion-error" id="allergy-error"></p>
-    </div>
-</div>
-<div class="profile-field">
+                    <h1 id="profile-title" tabindex="-1">身長・目標体重の変更</h1><p><a href="#profile-settings" id="profile-details-open">年齢・目標・アレルギーなどの設定</a></p>
+                    <div class="profile-field">
+                        <label for="profile-height">身長：</label>
+                        <input id="profile-height" name="heightCm" type="number" min="100" max="250" step="1" inputmode="numeric" required>
+                        <span>cm</span>
+                    </div>
+                    <div class="profile-field">
                         <label for="profile-target-weight">目標体重：</label>
-                        <input id="profile-target-weight" name="targetWeightKg" type="number" min="1" max="499.9" step="0.1" inputmode="decimal" placeholder="未設定">
+                        <input id="profile-target-weight" name="targetWeightKg" type="number" min="30" max="200" step="0.1" inputmode="decimal" placeholder="未設定">
                         <span>kg</span>
                     </div>
+                    <button type="submit" class="profile-save">変更を保存</button>
                 </section>
                 <section class="profile-section" aria-labelledby="profile-theme-title">
                     <h2 id="profile-theme-title">テーマカラーの変更</h2>
@@ -2806,10 +2782,69 @@ body .suggestion-header { display: flex; align-items: center; justify-content: s
                     </div>
                     <button type="button" id="profile-theme-reset" class="profile-reset">標準の色に戻す</button>
                 </section>
-                <p class="profile-hint">テーマカラーは選ぶと背景に反映されます。目標体重とテーマカラーはこのブラウザーに保存されます。</p>
+                <p class="profile-hint">テーマカラーは選ぶと背景に反映されます。身長・目標体重とテーマカラーはこのブラウザーに保存されます。</p>
                 <p id="profile-status" class="profile-status" role="status"></p>
             </form>
-        </aside>
+            <form class="profile-logout" method="post">
+                <button type="submit">ログアウト</button>
+            </form>
+        <section class="profile-details profile-section" id="profile-details" hidden="hidden">
+<h1 id="profile-details-title" tabindex="-1">プロフィール</h1>
+<p class="hint">ここで保存した情報を、食事・運動の相談条件に反映します。</p>
+<form method="post" id="profile-details-form">
+<label class="field">
+<span>表示名</span>
+<input maxlength="50" required name="displayName" id="detail-displayName" value="">
+</label>
+<div>
+<div class="grid">
+<label class="field">
+<span>身長（cm）</span>
+<input type="number" min="100" max="250" required name="heightCm" id="detail-heightCm" value="172">
+</label>
+<label class="field">
+<span>体重（kg）</span>
+<input type="number" min="30" max="200" required name="weightKg" id="detail-weightKg" value="68">
+</label>
+<label class="field">
+<span>年齢</span>
+<input type="number" min="15" max="90" required name="age" id="detail-age" value="19">
+</label>
+<label class="field">
+<span>性別</span>
+<select name="gender" id="detail-gender">
+<option value="男性" selected>男性</option><option value="女性">女性</option><option value="回答しない">回答しない</option></select>
+</label>
+<label class="field">
+<span>目標</span>
+<select name="goal" id="detail-goal">
+<option value="体を絞りたい" selected>体を絞りたい</option><option value="筋肉をつけたい">筋肉をつけたい</option><option value="体重を増やしたい">体重を増やしたい</option><option value="健康を維持したい">健康を維持したい</option></select>
+</label>
+<label class="field">
+<span>運動環境</span>
+<select name="environment" id="detail-environment">
+<option value="自宅（自重トレのみ）" selected>自宅（自重トレのみ）</option><option value="自宅（ダンベルあり）">自宅（ダンベルあり）</option><option value="ジムに通える">ジムに通える</option><option value="外を走れる">外を走れる</option></select>
+</label>
+</div>
+<label class="field">
+<span>アレルギー・苦手な食べ物</span>
+<input maxlength="200" placeholder="なければ空欄" name="allergy" id="detail-allergy" value="">
+</label>
+</div>
+<div class="grid">
+<label class="field">
+<span>目標体重（kg・任意）</span>
+<input type="number" step="0.1" min="30" max="200" name="targetWeightKg" id="detail-targetWeightKg" value="">
+</label>
+<label class="field">
+<span>目標日（任意）</span>
+<input type="date" name="targetDate" id="detail-targetDate" value="">
+</label>
+</div>
+<button class="button" type="submit">保存</button>
+</form>
+<button type="button" id="profile-details-back" class="profile-reset">身長・目標体重の変更に戻る</button><p id="profile-details-status" class="profile-status" role="status"></p></section>
+</aside>
     </main>
 
 </div>
@@ -2851,37 +2886,41 @@ document.addEventListener("DOMContentLoaded", () => {
 ;
 document.addEventListener("DOMContentLoaded", () => {
     const storageKey = "toresyoku.profile-settings";
-    const defaultColor = "#ef233c";
+    const defaultColor = "#ff0000";
     const page = document.querySelector(".record-page");
     const form = document.getElementById("profile-form");
-    const height = document.getElementById("heightCm");
+    const height = document.getElementById("profile-height");
     const targetWeight = document.getElementById("profile-target-weight");
     const color = document.getElementById("profile-color");
     const palette = document.getElementById("profile-palette");
     const status = document.getElementById("profile-status");
     const validColor = value => typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value);
-    let settings = { themeColor: defaultColor };
+    let settings = { themeColor: defaultColor, heightCm: window.mealChatProfile?.heightCm, targetWeightKg: null };
     try {
         const saved = JSON.parse(localStorage.getItem(storageKey));
         if (saved && typeof saved === "object") {
-            if (Number.isFinite(saved.targetWeightKg) && saved.targetWeightKg >= 1 && saved.targetWeightKg <= 499.9) settings.targetWeightKg = saved.targetWeightKg;
             if (validColor(saved.themeColor)) settings.themeColor = saved.themeColor.toLowerCase();
+            if (Number.isFinite(saved.heightCm) && saved.heightCm>=100 && saved.heightCm<=250) settings.heightCm=saved.heightCm;
+            if (Number.isFinite(saved.targetWeightKg) && saved.targetWeightKg>=30 && saved.targetWeightKg<=200) settings.targetWeightKg=saved.targetWeightKg;
         }
     } catch { status.textContent = "保存済みの設定を読み込めませんでした。変更はこの画面で利用できます。"; }
+    height.value = settings.heightCm ?? window.mealChatProfile?.heightCm ?? "";
     targetWeight.value = settings.targetWeightKg ?? "";
+    if (settings.heightCm) window.mealChatProfile = { ...window.mealChatProfile, heightCm: settings.heightCm };
 
     function publishProfile() {
         window.recordProfile = {
-            heightCm: window.mealChatProfile?.heightCm ?? null,
+            heightCm: settings.heightCm ?? window.mealChatProfile?.heightCm ?? null,
             targetWeightKg: settings.targetWeightKg ?? null
         };
         document.dispatchEvent(new CustomEvent("profile-updated", { detail: window.recordProfile }));
     }
+    try {window.mealChatProfile={...window.mealChatProfile,...JSON.parse(localStorage.getItem(storageKey)||'{}')};} catch {}
     publishProfile();
 
     function persist(message) {
         try {
-            localStorage.setItem(storageKey, JSON.stringify(settings));
+            localStorage.setItem(storageKey, JSON.stringify({ ...JSON.parse(localStorage.getItem(storageKey) || "{}"), ...settings }));
             status.textContent = message;
         } catch {
             status.textContent = "変更を反映しましたが、保存できませんでした。ブラウザーの保存設定や空き容量をご確認ください。";
@@ -2946,39 +2985,55 @@ document.addEventListener("DOMContentLoaded", () => {
     color.addEventListener("input", () => applyColor(color.value));
     color.addEventListener("change", () => chooseColor(color.value));
     document.getElementById("profile-theme-reset").addEventListener("click", () => chooseColor(defaultColor));
-    function updateTargetWeight() {
-        if (!targetWeight.validity.valid) return;
-        const value = targetWeight.value === "" ? null : targetWeight.valueAsNumber;
-        if (settings.targetWeightKg === value) return;
-        settings.targetWeightKg = value;
-        persist("目標体重を保存しました。");
-        publishProfile();
-    }
-    targetWeight.addEventListener("input", updateTargetWeight);
-    function updateProfile() {
-        if (!form.reportValidity()) return;
-        settings.targetWeightKg = targetWeight.value === "" ? null : Number(targetWeight.value);
-        const values = new FormData(form);
-        window.mealChatProfile = {
-            heightCm: Number(height.value),
-            weightKg: Number(values.get("weightKg")),
-            age: Number(values.get("age")),
-            gender: values.get("gender"),
-            goal: values.get("goal"),
-            environment: values.get("environment"),
-            allergy: values.get("allergy")
-        };
-        persist("相談に使う条件を更新し、目標体重を保存しました。");
-        publishProfile();
-    }
-    form.addEventListener("change", event => {
-        if (event.target === targetWeight) updateTargetWeight();
-        else if (event.target.name) updateProfile();
-    });
-    form.addEventListener("submit", event => {
+    form.addEventListener("submit", async event => {
         event.preventDefault();
-        updateProfile();
+        if (!form.reportValidity()) return;
+        const button = form.querySelector('[type="submit"]');
+        if (button.disabled) return;
+        button.disabled = true;
+        status.textContent = "保存しています…";
+        try {
+            const saved = {heightCm:Number(height.value),targetWeightKg:targetWeight.value === "" ? null : Number(targetWeight.value)};
+            localStorage.setItem(storageKey, JSON.stringify({...JSON.parse(localStorage.getItem(storageKey) || "{}"), ...settings, ...saved}));
+            settings = { ...settings, ...saved };
+            window.mealChatProfile = { ...window.mealChatProfile, heightCm: saved.heightCm };
+            publishProfile();
+            status.textContent = "身長・目標体重をこのブラウザーに保存しました。";
+        } catch (error) { status.textContent = error.message; }
+        finally { button.disabled = false; }
     });
+
+    const details = document.getElementById('profile-details');
+    const detailsForm = document.getElementById('profile-details-form');
+    const logout = document.querySelector('.profile-logout');
+    function detailsMode(open) {
+        form.hidden=open;logout.hidden=open;details.hidden=!open;
+        if(open) {
+            let values={...window.mealChatProfile, ...settings};
+            try { values={...values,...JSON.parse(localStorage.getItem(storageKey)||'{}')}; } catch {}
+            for(const field of detailsForm.elements) if(field.name) field.value=values[field.name]??'';
+            document.getElementById('profile-details-title').focus();
+        }
+    }
+    document.getElementById('profile-details-open').addEventListener('click', event=>{event.preventDefault();detailsMode(true);});
+    document.getElementById('profile-details-back').addEventListener('click', ()=>detailsMode(false));
+    document.getElementById('profile-navigation').addEventListener('click',()=>{ if(document.getElementById('profile-panel').hidden) detailsMode(false); });
+    detailsForm.addEventListener('submit',event=>{
+        event.preventDefault();if(!detailsForm.reportValidity())return;
+        const values={};
+        for(const field of detailsForm.elements) if(field.name) {
+            values[field.name]=['heightCm','weightKg','age','targetWeightKg'].includes(field.name)
+                ? field.value===''?null:Number(field.value):field.value;
+        }
+        const detailStatus=document.getElementById('profile-details-status');
+        try {
+            localStorage.setItem(storageKey,JSON.stringify({...JSON.parse(localStorage.getItem(storageKey)||'{}'),...settings,...values}));
+            settings={...settings,...values};window.mealChatProfile={...window.mealChatProfile,...values};
+            height.value=values.heightCm;targetWeight.value=values.targetWeightKg??'';publishProfile();
+            detailStatus.textContent='プロフィールをこのブラウザーに保存しました。';
+        } catch { detailStatus.textContent='保存できませんでした。ブラウザーの保存設定をご確認ください。'; }
+    });
+    logout.addEventListener('submit',event=>{event.preventDefault();status.textContent='この公開ページではログイン機能は未接続です。';});
     applyColor(settings.themeColor);
 });
 
