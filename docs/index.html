@@ -5061,5 +5061,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-</script></body>
+</script><script>(() => {
+ const date='2026-10-06';
+ try {
+  if (!window.recordStore.read(date)) {
+   window.recordStore.save({date, weight:68.4,
+    meals:[{name:'チキン定食', category:'lunch', calories:650, proteinG:35, fatG:20, carbohydratesG:80, fiberG:5, saltG:2.5}],
+    workouts:[{name:'ウォーキング 30分', calories:150}]
+   });
+  }
+ } catch { /* ブラウザー保存が利用できない場合は通常の空の画面を表示する。 */ }
+})();</script></body>
 </html>
